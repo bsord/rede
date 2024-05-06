@@ -9,6 +9,7 @@ export const SubscriptionRoutes = () => {
     <Routes>
       <Route path="/" element={<Subscriptions />} />
       <Route path="/new" element={<CreateSubscription />} />
+      <Route path="/:subscriptionId/*" element={<Subscription />} />
       <Route path="*" element={<Navigate to="." />} />
     </Routes>
   );
