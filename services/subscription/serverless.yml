@@ -1,0 +1,98 @@
+service: subscriptions
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: us-east-1
+  environment:
+    MONGO_CONNECTION_STRING: ${ssm:/primary_db_connection_string}
+    OPENAI_API_KEY: ${ssm:/openai_api_key}
+
+
+plugins:
+  - serverless-domain-manager
+
+custom:
+  customDomain:
+    domainName: "api.${ssm:/primary_domain_name}"
+    certificateArn: ${ssm:/primary_domain_cert_arn}
+    basePath: "subscriptions"
+    endpointType: 'regional'
+    securityPolicy: tls_1_2
+    apiType: rest
+
+functions:
+
+  addSubscription:
+    timeout: 30
+    handler: index.add_subscription
+    logRetentionInDays: 30
+    events:
+      - http:
+          path: /
+          method: post
+          cors: 
+            origin: '*'
+            headers: '*'
+
+  getSubscriptions:
+    timeout: 30
+    handler: index.get_subscriptions
+    logRetentionInDays: 30
+    events:
+      - http:
+          path: /
+          method: get
+          cors: 
+            origin: '*'
+            headers: '*'
+
+  getSubscriptionById:
+    timeout: 30
+    handler: index.get_subscription_by_id
+    logRetentionInDays: 30
+    events:
+      - http:
+          path: /{subscription_id}
+          method: get
+          request:
+            parameters:
+              paths:
+                subscription_id: true
+          cors: 
+            origin: '*'
+            headers: '*'
+
+  updateSubscription:
+    timeout: 30
+    handler: index.update_subscription
+    logRetentionInDays: 30
+    events:
+      - http:
+          path: /{subscription_id}
+          method: post
+          request:
+            parameters:
+              paths:
+                subscription_id: true
+          cors: 
+            origin: '*'
+            headers: '*'
+
+  deleteSubscription:
+    timeout: 30
+    handler: index.delete_subscription
+    logRetentionInDays: 30
+    events:
+      - http:
+          path: /{subscription_id}
+          method: delete
+          request:
+            parameters:
+              paths:
+                subscription_id: true
+          cors: 
+            origin: '*'
+            headers: '*'
+
