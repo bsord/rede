@@ -1,5 +1,5 @@
 {
-  "name": "subscriptions",
+  "name": "email",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -12,6 +12,7 @@
     "serverless-domain-manager": "^7.1.2"
   },
   "dependencies": {
+    "aws-sdk": "^2.1614.0",
     "mongoose": "^7.6.3"
   }
 }

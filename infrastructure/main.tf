@@ -29,7 +29,7 @@ resource "cloudflare_record" "primary_domain_cert_validation_records" {
   name            = trimsuffix(each.value.name, ".${var.primary_domain}.")
   value           = each.value.record
   type            = each.value.type
-  ttl             = 3600
+  ttl             = 600
   proxied         = false
   allow_overwrite = true
 }
@@ -158,7 +158,7 @@ resource "cloudflare_record" "primary_domain_cdn_cname" {
   name    = var.primary_domain
   value   = aws_cloudfront_distribution.primary_domain_cdn_distribution.domain_name
   type    = "CNAME"
-  ttl     = 3600
+  ttl     = 600
   proxied = false
 }
 
@@ -186,4 +186,67 @@ resource "aws_ssm_parameter" "openai_api_key" {
   type        = "SecureString"
   value       = var.openai_api_key
   description = "OpenAI api key"
+}
+
+
+resource "aws_ses_domain_identity" "primary_domain_ses_identity" {
+  domain = var.primary_domain
+}
+
+resource "aws_ses_domain_identity_verification" "primary_domain_ses_identity_verification" {
+  domain     = aws_ses_domain_identity.primary_domain_ses_identity.id
+  depends_on = [cloudflare_record.primary_domain_ses_domain_verification]
+}
+
+resource "aws_ses_domain_dkim" "primary_domain_ses_domain_dkim" {
+  domain = var.primary_domain
+}
+
+resource "cloudflare_record" "primary_domain_ses_domain_verification" {
+  zone_id = var.cloudflare_zone_id
+  name    = "_amazonses.${aws_ses_domain_identity.primary_domain_ses_identity.id}"
+  type    = "TXT"
+  value   = aws_ses_domain_identity.primary_domain_ses_identity.verification_token
+}
+
+resource "cloudflare_record" "dkim" {
+  zone_id = var.cloudflare_zone_id
+  count   = 3
+  name = format(
+    "%s._domainkey.%s",
+    element(aws_ses_domain_dkim.primary_domain_ses_domain_dkim.dkim_tokens, count.index),
+    var.primary_domain,
+  )
+  type  = "CNAME"
+  value = "${element(aws_ses_domain_dkim.primary_domain_ses_domain_dkim.dkim_tokens, count.index)}.dkim.amazonses.com"
+}
+
+resource "cloudflare_record" "spf" {
+  zone_id = var.cloudflare_zone_id
+  name    = var.primary_domain
+  type    = "TXT"
+  value   = "v=spf1 include:amazonses.com -all"
+}
+
+
+resource "cloudflare_record" "dmarc" {
+  zone_id = var.cloudflare_zone_id
+  name    = "_dmarc.${var.primary_domain}"
+  type    = "TXT"
+  value   = "v=DMARC1; p=reject;"
+}
+
+resource "cloudflare_record" "mail_from_mx" {
+  zone_id = var.cloudflare_zone_id
+  name    = "mail.${var.primary_domain}"
+  type    = "MX"
+  priority = "10"
+  value   = "feedback-smtp.us-east-1.amazonses.com"
+}
+
+resource "cloudflare_record" "mail_from_txt" {
+  zone_id = var.cloudflare_zone_id
+  name    = "mail.${var.primary_domain}"
+  type    = "TXT"
+  value   = "v=spf1 include:amazonses.com ~all"
 }

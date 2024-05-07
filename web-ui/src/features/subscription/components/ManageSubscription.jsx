@@ -17,6 +17,7 @@ const ManageSubscription = ({subscriptionId}) => {
       <div>email: {subscription.email}</div>
       <div>niche: {subscription.niche}</div>
       <div>id: {subscription._id}</div>
+      <div>type: {subscription.template.name}</div>
     </div>
   );
 }

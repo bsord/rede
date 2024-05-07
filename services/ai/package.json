@@ -1,5 +1,5 @@
 {
-  "name": "subscriptions",
+  "name": "ai",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -12,6 +12,7 @@
     "serverless-domain-manager": "^7.1.2"
   },
   "dependencies": {
-    "mongoose": "^7.6.3"
+    "mongoose": "^7.6.3",
+    "openai": "^4.41.0"
   }
 }

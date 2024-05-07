@@ -6,7 +6,9 @@ export const Subscription = () => {
   return (
     <Layout title="Subscriptions">
       <div className='flex justify-center items-center h-full'>
-        <ManageSubscription subscriptionId={subscriptionId}/>
+        <div className='bg-white p-4 rounded-xl w-1/2'>
+          <ManageSubscription subscriptionId={subscriptionId}/>
+        </div>
       </div>
     </Layout>
   );

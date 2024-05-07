@@ -21,7 +21,7 @@ export const Layout = ({ title, children }) => {
             </div>
           </div>
 
-          <main className="flex-1 relative overflow-y-auto focus:outline-none">{children}</main>
+          <main className="flex-1 relative overflow-y-auto focus:outline-none  bg-gray-300">{children}</main>
 
           <div className="mb-2">
             <Copyright />

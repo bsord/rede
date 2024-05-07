@@ -16,8 +16,9 @@ module.exports.add_subscription = async (event) => {
 
   // insert subscription to database
   const subscription = await Subscription.create({
-    email: body?.email || 'test@test.com',
-    niche: body?.niche || 'testing'
+    email: body.email, 
+    niche: body.niche,
+    template: body.template
   })
 
   return {
