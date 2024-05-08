@@ -1,5 +1,7 @@
 const mongoose = require('./db')
 const Subscription = require('./models/subscription')
+const SubscriptionEvent = require('./models/subscription_event')
+const SubscriptionProcessor = require("./subscriptionProcessor");
 
 const headers = {
   'Access-Control-Allow-Origin': '*',
@@ -18,7 +20,10 @@ module.exports.add_subscription = async (event) => {
   const subscription = await Subscription.create({
     email: body.email, 
     niche: body.niche,
-    template: body.template
+    template: body.template,
+    nextRunTime: Date.now(),
+    intervalMinutes: 10,
+    lastProcessedTime: null
   })
 
   return {
@@ -69,6 +74,24 @@ module.exports.get_subscription_by_id = async (event) => {
       message: `here is your subscription: ${subscription_id}`,
       subscription: subscription,
       input: event,
+    }),
+  }
+}
+
+module.exports.get_subscription_events_by_subscription_id = async (event) => {
+  // get subscription id from url path
+  const subscription_id = event.pathParameters.subscription_id
+  await mongoose.connect()
+  const subscriptionEvents = await SubscriptionEvent.find({subscriptionId: subscription_id}).sort({createdAt: -1})
+
+  // find subscription in database
+
+  return {
+    statusCode: 200,
+    headers: headers,
+    body: JSON.stringify({
+      message: `events for subscription: ${subscription_id}`,
+      events: subscriptionEvents,
     }),
   }
 }
@@ -124,4 +147,17 @@ module.exports.delete_subscription = async (event) => {
       input: event,
     }),
   }
+}
+
+
+// DESTROY
+module.exports.send_subscription_emails = async (event) => {
+  // connect to database
+  await mongoose.connect()
+
+  // get all subscriptions
+  const subscriptions = await Subscription.find()
+
+  await SubscriptionProcessor.process_subscriptions(subscriptions)
+
 }

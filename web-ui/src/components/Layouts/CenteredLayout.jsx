@@ -5,7 +5,7 @@ export const CenteredLayout = ({ children, title }) => {
       <Head title={title} />
       <div className="h-screen w-full grid">
         <div className="flex justify-center items-center">
-          <div className="w-full max-w-lg">{children}</div>
+          {children}
         </div>
       </div>
     </>

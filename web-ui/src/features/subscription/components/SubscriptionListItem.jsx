@@ -2,6 +2,7 @@
 import { useDeleteSubscription } from '../api/deleteSubscription';
 import { LinearProgress } from '../../../components/Elements';
 import { Input, Button } from '../../../components/Elements';
+import SubscriptionEvents from './SubscriptionEvents';
 
 const SubscriptionListItem = ({subscription}) => {
   const { mutate: deleteSubscription, isPending: isDeletePending, error: deleteError } = useDeleteSubscription();
@@ -19,6 +20,9 @@ const SubscriptionListItem = ({subscription}) => {
       <div>niche: {subscription.niche}</div>
       <div>id: {subscription._id}</div>
       <div>type: {subscription.template.name}</div>
+      <div>Next Email: {subscription.nextRunTime}</div>
+      <div>Last Email: {subscription.lastProcessedTime}</div>
+      <div>intervalMinutes: {subscription.intervalMinutes}</div>
       <Button
         onClick={() => {
           handleDelete();
@@ -27,6 +31,7 @@ const SubscriptionListItem = ({subscription}) => {
         x
       </Button>
       {isDeletePending && <LinearProgress />}
+      <SubscriptionEvents subscriptionId={subscription._id}/>
     </li>
   );
 }

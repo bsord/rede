@@ -144,6 +144,13 @@ resource "aws_cloudfront_distribution" "primary_domain_cdn_distribution" {
     cached_methods         = ["GET", "HEAD"]
     target_origin_id       = aws_s3_bucket.primary_domain_cdn.bucket_regional_domain_name
   }
+
+  custom_error_response {
+    error_code         = 404
+    response_code      = 200
+    response_page_path = "/"
+  }
+  
 }
 
 resource "aws_ssm_parameter" "primary_domain_cdn_distribution" {

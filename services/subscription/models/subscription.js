@@ -16,10 +16,25 @@ const SubscriptionSchema = new Schema({
       type: String, required: true
     } 
   },
+  nextRunTime: {
+    type: Date,
+    required: true,
+    index: true
+  },
+  intervalMinutes: {
+    type: Number,
+    required: true,
+    min: 1  // Minimum interval time in minutes
+  },
+  lastProcessedTime: {
+    type: Date
+  },
 },
 {
   timestamps: true
 })
 
+SubscriptionSchema.index({ nextRunTime: 1 });
+
 // Export model
-module.exports = mongoose.model('Subscription', SubscriptionSchema)
+module.exports = mongoose.model('subscription', SubscriptionSchema)

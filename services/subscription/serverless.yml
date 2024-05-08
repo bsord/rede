@@ -8,7 +8,7 @@ provider:
   environment:
     MONGO_CONNECTION_STRING: ${ssm:/primary_db_connection_string}
     OPENAI_API_KEY: ${ssm:/openai_api_key}
-
+    API_DOMAIN: "api.${ssm:/primary_domain_name}"
 
 plugins:
   - serverless-domain-manager
@@ -64,6 +64,22 @@ functions:
             origin: '*'
             headers: '*'
 
+  getSubscriptionEventsBySubscriptionId:
+    timeout: 30
+    handler: index.get_subscription_events_by_subscription_id
+    logRetentionInDays: 30
+    events:
+      - http:
+          path: /{subscription_id}/events
+          method: get
+          request:
+            parameters:
+              paths:
+                subscription_id: true
+          cors: 
+            origin: '*'
+            headers: '*'
+
   updateSubscription:
     timeout: 30
     handler: index.update_subscription
@@ -96,3 +112,12 @@ functions:
             origin: '*'
             headers: '*'
 
+  sendSubscriptionEmails:
+    timeout: 30
+    memorySize: 256
+    handler: index.send_subscription_emails
+    logRetentionInDays: 7
+    events:
+      - schedule:
+          rate: rate(1 hour)
+          enabled: true

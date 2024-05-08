@@ -80,6 +80,7 @@ const CreateSubscriptionForm = () => {
             autoFocus
             value={email}
             onChange={handleChange}
+            placeholder="Email address"
           />
           <Typography variant="h6">Niche</Typography>
           <select id="niche" name="niche" value={niche} onChange={handleNicheChange}>
@@ -102,7 +103,7 @@ const CreateSubscriptionForm = () => {
               </option>
             ))}
           </select>
-          <Button type="button" onClick={handlePreview}>
+          <Button type="button" disabled={ contentPreviewIsPending || !email} onClick={handlePreview}>
             preview
           </Button>
           {contentPreviewIsPending && <LinearProgress />}

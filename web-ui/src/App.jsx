@@ -1,7 +1,7 @@
 import { Navigate } from 'react-router-dom'
 import { Error } from './components/Error'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
-import { Landing, NotFound } from './features/misc'
+import { Landing, NotFound, Privacy } from './features/misc'
 import { AppProvider } from './providers/App'
 import { useAuthenticatedUser } from './features/auth/api/getAuthenticatedUser'
 import { AuthRoutes } from './features/auth'
@@ -27,6 +27,11 @@ const router = createBrowserRouter([
   {
     path: '/',
     element: <Landing />,
+    errorElement: <Error />,
+  },
+  {
+    path: '/privacy',
+    element: <Privacy />,
     errorElement: <Error />,
   },
   {

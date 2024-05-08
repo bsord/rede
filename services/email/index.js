@@ -1,7 +1,7 @@
 const mongoose = require('./db')
 var aws = require('aws-sdk');
 var ses = new aws.SES({region: 'us-east-1'});
-const SubscriptionEmails = require('./models/subscription_emails')
+const EmailLog = require('./models/email_log')
 
 const headers = {
   'Access-Control-Allow-Origin': '*',
@@ -9,40 +9,67 @@ const headers = {
 }
 
 // CREATE
-module.exports.send_emails = async (event) => {
+module.exports.send_email = async (event) => {
   // get event body
+
   var body = JSON.parse(event.body)
-// connect to database
+  const {recipients, emailBody, subject, fromAddress} = body
+
+  // connect to database
   await mongoose.connect()
 
-  // insert log of email into database
-  const email_log = await SubscriptionEmails.create({
-    subscriptionId: '6639a9963004350b43bebf28',
-    content: '<div>testpayload</div>'
-  })
-
+  // define email based on body params
   var params = {
     Destination: {
-      ToAddresses: ["brandon.sorgdrager@gmail.com"],
+      ToAddresses: recipients,
     },
     Message: {
       Body: {
-        Text: { Data: "Test" },
+        Html: { Data: emailBody, Charset: 'UTF-8'},
       },
 
-      Subject: { Data: "Test Email" },
+      Subject: { Data: subject, Charset: 'UTF-8'},
     },
-    Source: "brandon@rede.io",
+    Source: fromAddress,
   };
- 
-  const emailResponse = await ses.sendEmail(params).promise()
+  
 
-  return {
-    statusCode: 200,
-    headers: headers,
-    body: JSON.stringify({
-      message: 'sent emails successfully',
-      response: emailResponse
-    }),
+  try {
+    // send email
+    const emailResponse = await ses.sendEmail(params).promise()
+
+    // insert log of email into database
+    const email_log = await EmailLog.create({
+      success: true,
+      detail: emailResponse,
+      recipients: recipients,
+      subject: subject,
+      fromAddress: fromAddress,
+      emailBody: emailBody
+    })
+
+    // return success with email details
+    return {
+      statusCode: 200,
+      headers: headers,
+      body: JSON.stringify(email_log),
+    }
+  } catch (error) {
+    // insert log of email into database
+    const email_log = await EmailLog.create({
+      success: false,
+      detail: error,
+      recipients: recipients,
+      subject: subject,
+      fromAddress: fromAddress,
+      emailBody: emailBody
+    })
+
+    return {
+      statusCode: 500,
+      headers: headers,
+      body: JSON.stringify(email_log),
+    }
   }
+  
 }

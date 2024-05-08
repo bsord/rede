@@ -29,7 +29,7 @@ custom:
 functions:
   sendEmails:
     timeout: 30
-    handler: index.send_emails
+    handler: index.send_email
     logRetentionInDays: 30
     events:
       - http:
