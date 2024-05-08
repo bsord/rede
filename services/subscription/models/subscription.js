@@ -29,6 +29,12 @@ const SubscriptionSchema = new Schema({
   lastProcessedTime: {
     type: Date
   },
+  status: {
+    type: String,
+    required: true,
+    enum: ['active', 'inactive', 'paused'],
+    index: true
+  },
 },
 {
   timestamps: true

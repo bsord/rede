@@ -17,12 +17,13 @@ const SubscriptionListItem = ({subscription}) => {
   return (
     <li className='border p-2 border-gray-400 rounded-lg'>
       <div>email: {subscription.email}</div>
+      <div>status: {subscription.status} </div>
       <div>niche: {subscription.niche}</div>
       <div>id: {subscription._id}</div>
       <div>type: {subscription.template.name}</div>
       <div>Next Email: {subscription.nextRunTime}</div>
       <div>Last Email: {subscription.lastProcessedTime}</div>
-      <div>intervalMinutes: {subscription.intervalMinutes}</div>
+      <div>every: {parseInt(subscription.intervalMinutes) / 1440} days</div>
       <Button
         onClick={() => {
           handleDelete();

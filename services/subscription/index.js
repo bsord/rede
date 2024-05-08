@@ -21,10 +21,15 @@ module.exports.add_subscription = async (event) => {
     email: body.email, 
     niche: body.niche,
     template: body.template,
-    nextRunTime: Date.now(),
-    intervalMinutes: 10,
-    lastProcessedTime: null
+    nextRunTime: body?.nextRunTime || Date.now(),
+    intervalMinutes: body?.intervalMinutes || 1440,
+    lastProcessedTime: null,
+    status: 'active'
   })
+
+
+  //send first email
+  await SubscriptionProcessor.process_subscription(subscription)
 
   return {
     statusCode: 200,
@@ -150,14 +155,20 @@ module.exports.delete_subscription = async (event) => {
 }
 
 
-// DESTROY
 module.exports.send_subscription_emails = async (event) => {
   // connect to database
   await mongoose.connect()
 
-  // get all subscriptions
-  const subscriptions = await Subscription.find()
+  // get all subscriptions that are due
+  const now = new Date();
+  const subscriptions = await Subscription.find({
+    nextRunTime: { $lte: now },
+    status: 'active'
+  });
 
-  await SubscriptionProcessor.process_subscriptions(subscriptions)
-
+  // Process the due subscriptions
+  console.log('subscriptions to process:', subscriptions.length);
+  for (const subscription of subscriptions) {
+    await SubscriptionProcessor.process_subscription(subscription);
+  }
 }

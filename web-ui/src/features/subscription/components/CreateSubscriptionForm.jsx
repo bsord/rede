@@ -8,6 +8,14 @@ import { useNavigate } from 'react-router-dom';
 import ContentPreview from './ContentPreview';
 import { templates, niches } from './data';
 
+const intervals = [
+  { label: '1 day', value: 1440 }, // 1 day in minutes
+  { label: '7 days', value: 10080 }, // 7 days in minutes
+  { label: '30 days', value: 43200 }, // 30 days in minutes
+  { label: '60 days', value: 86400 }, // 60 days in minutes
+  { label: '90 days', value: 129600 }, // 90 days in minutes
+];
+
 const CreateSubscriptionForm = () => {
   const navigate = useNavigate();
   const { mutate: createSubscription, isPending: subscriptionIsPending, error: subscriptionError } = useCreateSubscription();
@@ -17,6 +25,7 @@ const CreateSubscriptionForm = () => {
   const [niche, setNiche] = useState(niches[0] || '');
   const [selectedTemplate, setSelectedTemplate] = useState(templates[0]);
   const [contentPreview, setContentPreview] = useState();
+  const [intervalMinutes, setIntervalMinutes] = useState(intervals[0].value); // Default to the first interval value in minutes
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -32,15 +41,21 @@ const CreateSubscriptionForm = () => {
   const handleTemplateChange = (event) => {
     const selectedTemplate = templates.find((template) => template.name === event.target.value);
     if (selectedTemplate) {
-      setSelectedTemplate(selectedTemplate); // Store the entire template object
+      setSelectedTemplate(selectedTemplate);
     }
+  };
+
+  const handleIntervalChange = (event) => {
+    const selectedMinutes = parseInt(event.target.value, 10);
+    setIntervalMinutes(selectedMinutes);
   };
 
   const handleSubmit = () => {
     const subscriptionData = {
       email,
       niche,
-      template: selectedTemplate, // Pass the whole template object here
+      template: selectedTemplate,
+      intervalMinutes, // Include the interval value in minutes
     };
 
     createSubscription(subscriptionData, {
@@ -55,7 +70,7 @@ const CreateSubscriptionForm = () => {
     const subscriptionData = {
       email,
       niche,
-      template: selectedTemplate.content, // Use only the content property for preview
+      template: selectedTemplate.content,
     };
 
     createAiContentPreview(subscriptionData, {
@@ -103,6 +118,16 @@ const CreateSubscriptionForm = () => {
               </option>
             ))}
           </select>
+
+          <Typography variant="h6">Interval</Typography>
+          <select id="interval" name="interval" value={intervalMinutes} onChange={handleIntervalChange}>
+            {intervals.map((interval) => (
+              <option key={interval.value} value={interval.value}>
+                {interval.label}
+              </option>
+            ))}
+          </select>
+
           <Button type="button" disabled={ contentPreviewIsPending || !email} onClick={handlePreview}>
             preview
           </Button>
