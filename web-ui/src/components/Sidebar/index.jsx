@@ -15,7 +15,7 @@ import {
 
 export const Sidebar = () => {
   const logout = useLogout()
-  //const { data: user } = useAuthenticatedUser()
+  const { data: user } = useAuthenticatedUser()
 
   return (
     <div className="h-screen w-full max-w-[20rem] flex flex-col p-4 shadow-sm bg-white border border-blue-gray-100 justify-between rounded-none ">
@@ -70,9 +70,11 @@ export const Sidebar = () => {
             </ListItem>
           </Link>
           <ListItem>
-            {
-              //user?.email && user.email
+            <div className='flex flex-col'>
+              {
+              user?.email && user.email
             }
+            
             <Button
               onClick={() => {
                 logout.mutate()
@@ -80,6 +82,7 @@ export const Sidebar = () => {
             >
               Logout
             </Button>
+            </div>
           </ListItem>
         </List>
       </div>

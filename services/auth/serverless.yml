@@ -7,8 +7,8 @@ provider:
   region: us-east-1
   environment:
     MONGO_CONNECTION_STRING: ${ssm:/primary_db_connection_string}
-    JWT_SECRET: 'changeme'
-
+    JWT_SECRET: 'rede-secret'
+    API_DOMAIN: "api.${ssm:/primary_domain_name}"
 
 plugins:
   - serverless-domain-manager
@@ -35,6 +35,30 @@ functions:
           cors: 
             origin: '*'
             headers: '*'
+  magic:
+    timeout: 30
+    handler: index.magicLinkLogin
+    logRetentionInDays: 7
+    events:
+      - http:
+          path: /magic
+          method: post
+          cors: 
+            origin: '*'
+            headers: '*'
+
+  magicLink:
+    timeout: 30
+    handler: index.requestMagicLink
+    logRetentionInDays: 7
+    events:
+      - http:
+          path: /magic-link
+          method: post
+          cors: 
+            origin: '*'
+            headers: '*'
+  
 
   login:
     timeout: 30

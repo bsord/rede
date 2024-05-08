@@ -12,6 +12,7 @@
     "serverless-domain-manager": "^7.1.2"
   },
   "dependencies": {
+    "axios": "^1.6.8",
     "bcryptjs": "^2.4.3",
     "bcryptjs-then": "^1.0.1",
     "jsonwebtoken": "^9.0.2",

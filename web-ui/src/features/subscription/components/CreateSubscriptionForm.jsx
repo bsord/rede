@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Input, Typography, Button, LinearProgress } from '../../../components/Elements';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
@@ -9,7 +9,7 @@ import ContentPreview from './ContentPreview';
 import { templates, niches } from './data';
 
 const intervals = [
-  { label: '1 day', value: 1440 }, // 1 day in minutes
+  { label: 'day', value: 1440 }, // 1 day in minutes
   { label: '7 days', value: 10080 }, // 7 days in minutes
   { label: '30 days', value: 43200 }, // 30 days in minutes
   { label: '60 days', value: 86400 }, // 60 days in minutes
@@ -36,12 +36,14 @@ const CreateSubscriptionForm = () => {
 
   const handleNicheChange = (event) => {
     setNiche(event.target.value);
+    handlePreview()
   };
 
   const handleTemplateChange = (event) => {
     const selectedTemplate = templates.find((template) => template.name === event.target.value);
     if (selectedTemplate) {
       setSelectedTemplate(selectedTemplate);
+      handlePreview()
     }
   };
 
@@ -81,31 +83,19 @@ const CreateSubscriptionForm = () => {
     });
   };
 
+  useEffect(()=>{
+    handlePreview()
+  },[niche, selectedTemplate])
+  
+
   return (
     <div>
       Fill out the form to create a subscription
       <form>
-        <div className="flex flex-col gap-2 mb-4">
-          <Typography variant="h6">Email Address</Typography>
-          <Input
-            id="email"
-            label="email"
-            name="email"
-            autoComplete="email"
-            autoFocus
-            value={email}
-            onChange={handleChange}
-            placeholder="Email address"
-          />
-          <Typography variant="h6">Niche</Typography>
-          <select id="niche" name="niche" value={niche} onChange={handleNicheChange}>
-            {niches.map((niche, index) => (
-              <option key={index} value={niche}>
-                {niche}
-              </option>
-            ))}
-          </select>
-          <Typography variant="h6">Template</Typography>
+        <div className="flex flex-col gap-2 my-4 text-left mx-4">
+          
+          
+          <Typography variant="h6">I would like ai generated</Typography>
           <select
             id="template"
             name="template"
@@ -118,8 +108,16 @@ const CreateSubscriptionForm = () => {
               </option>
             ))}
           </select>
+          <Typography variant="h6">about</Typography>
+          <select id="niche" name="niche" value={niche} onChange={handleNicheChange}>
+            {niches.map((niche, index) => (
+              <option key={index} value={niche}>
+                {niche}
+              </option>
+            ))}
+          </select>
 
-          <Typography variant="h6">Interval</Typography>
+          <Typography variant="h6">every</Typography>
           <select id="interval" name="interval" value={intervalMinutes} onChange={handleIntervalChange}>
             {intervals.map((interval) => (
               <option key={interval.value} value={interval.value}>
@@ -128,18 +126,32 @@ const CreateSubscriptionForm = () => {
             ))}
           </select>
 
-          <Button type="button" disabled={ contentPreviewIsPending || !email} onClick={handlePreview}>
-            preview
+          
+
+
+          
+          <Typography variant="h6">sent to</Typography>
+          <Input
+            id="email"
+            label="email"
+            name="email"
+            autoComplete="email"
+            autoFocus
+            value={email}
+            onChange={handleChange}
+            placeholder="Email address"
+          />
+          <Button type="button" disabled={subscriptionIsPending || !email} onClick={handleSubmit}>
+            Send the emails! {subscriptionIsPending && <FontAwesomeIcon icon={faSpinner} className="ml-2 animate-spin" />}
           </Button>
+          {subscriptionIsPending && <LinearProgress />}
+          {subscriptionError && <span>There was an error</span>}
+          <Typography variant="h5">Preview:</Typography>
           {contentPreviewIsPending && <LinearProgress />}
           {contentPreview && <ContentPreview htmlContent={contentPreview} />}
-
-          <Button type="button" disabled={subscriptionIsPending || !contentPreview} onClick={handleSubmit}>
-            Create Subscription! {subscriptionIsPending && <FontAwesomeIcon icon={faSpinner} className="ml-2 animate-spin" />}
-          </Button>
+          
         </div>
-        {subscriptionIsPending && <LinearProgress />}
-        {subscriptionError && <span>There was an error</span>}
+        
       </form>
     </div>
   );
