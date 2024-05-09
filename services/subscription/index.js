@@ -10,149 +10,199 @@ const headers = {
 
 // CREATE
 module.exports.add_subscription = async (event) => {
-  // get event body
-  var body = JSON.parse(event.body)
+  // Get user ID from authorizer
+  const userId = event.requestContext.authorizer.principalId;
+  
+  // Parse the event body
+  var body = JSON.parse(event.body);
 
-  // connect to database
-  await mongoose.connect()
+  // Connect to the database
+  await mongoose.connect();
 
-  // insert subscription to database
+  // Create the new subscription with the owner ID
   const subscription = await Subscription.create({
-    email: body.email, 
+    email: body.email,
     niche: body.niche,
     template: body.template,
-    nextRunTime: body?.nextRunTime || Date.now(),
-    intervalMinutes: body?.intervalMinutes || 1440,
+    nextRunTime: body.nextRunTime || Date.now(),
+    intervalMinutes: body.intervalMinutes || 1440,
     lastProcessedTime: null,
-    status: 'active'
-  })
+    status: 'active',
+    ownerId: userId // Set the ownerId here
+  });
 
-
-  //send first email
-  await SubscriptionProcessor.process_subscription(subscription)
+  // Send the first email
+  await SubscriptionProcessor.process_subscription(subscription);
 
   return {
     statusCode: 200,
     headers: headers,
     body: JSON.stringify({
-      message: 'Got subscription!',
+      message: 'Subscription created!',
       subscription: subscription,
       input: event,
     }),
-  }
-}
+  };
+};
 
 // READ
 module.exports.get_subscriptions = async (event) => {
-  // get event body
-  var body = JSON.parse(event.body)
+  // Get user ID from authorizer
+  const userId = event.requestContext.authorizer.principalId;
+  
+  // Connect to the database
+  await mongoose.connect();
 
-  // connect to database
-  await mongoose.connect()
-
-  // get all subscriptions
-  const subscriptions = await Subscription.find()
+  // Retrieve subscriptions only for this user
+  const subscriptions = await Subscription.find({ ownerId: userId });
 
   return {
     statusCode: 200,
     headers: headers,
     body: JSON.stringify({
-      message: 'Here are your subscriptions!!',
+      message: 'Here are your subscriptions!',
       subscriptions: subscriptions,
       input: event,
     }),
-  }
-}
+  };
+};
 
 module.exports.get_subscription_by_id = async (event) => {
-  // get subscription id from url path
-  const subscription_id = event.pathParameters.subscription_id
-  await mongoose.connect()
-  const subscription = await Subscription.findById(subscription_id)
+  const userId = event.requestContext.authorizer.principalId;
+  const subscription_id = event.pathParameters.subscription_id;
 
-  // find subscription in database
+  await mongoose.connect();
+  const subscription = await Subscription.findOne({ _id: subscription_id, ownerId: userId });
 
   return {
     statusCode: 200,
     headers: headers,
     body: JSON.stringify({
-      message: `here is your subscription: ${subscription_id}`,
+      message: `Subscription with ID: ${subscription_id}`,
       subscription: subscription,
       input: event,
     }),
-  }
-}
+  };
+};
 
 module.exports.get_subscription_events_by_subscription_id = async (event) => {
-  // get subscription id from url path
-  const subscription_id = event.pathParameters.subscription_id
-  await mongoose.connect()
-  const subscriptionEvents = await SubscriptionEvent.find({subscriptionId: subscription_id}).sort({createdAt: -1})
+  // Extract user ID and subscription ID
+  const userId = event.requestContext.authorizer.principalId;
+  const subscription_id = event.pathParameters.subscription_id;
 
-  // find subscription in database
+  // Connect to the database
+  await mongoose.connect();
+
+  // Retrieve the subscription, ensuring it belongs to the requesting user
+  const subscription = await Subscription.findOne({
+    _id: subscription_id,
+    ownerId: userId,
+  });
+
+  if (!subscription) {
+    return {
+      statusCode: 404,
+      headers: headers,
+      body: JSON.stringify({
+        message: `Subscription with ID ${subscription_id} not found or not owned by the user.`,
+      }),
+    };
+  }
+
+  // If the subscription is valid, retrieve the events
+  const subscriptionEvents = await SubscriptionEvent.find({
+    subscriptionId: subscription_id,
+  }).sort({ createdAt: -1 });
 
   return {
     statusCode: 200,
     headers: headers,
     body: JSON.stringify({
-      message: `events for subscription: ${subscription_id}`,
+      message: `Events for subscription: ${subscription_id}`,
       events: subscriptionEvents,
     }),
-  }
-}
+  };
+};
 
-// UPDATE
 module.exports.update_subscription = async (event) => {
-  // get subscription id from url path
-  const subscription_id = event.pathParameters.subscription_id
+  // Extract user ID and subscription ID
+  const userId = event.requestContext.authorizer.principalId;
+  const subscription_id = event.pathParameters.subscription_id;
 
-  // get event body
-  var body = JSON.parse(event.body)
+  // Parse the request body
+  const body = JSON.parse(event.body);
 
-  // connect to database
-  await mongoose.connect()
+  // Connect to the database
+  await mongoose.connect();
 
-  // update subscription in database
-  const subscription = await Subscription.findByIdAndUpdate(
-    subscription_id,
+  // Update subscription only if owned by the user
+  const subscription = await Subscription.findOneAndUpdate(
+    { _id: subscription_id, ownerId: userId },
     {
-      text: body?.text,
+      email: body?.email,
+      niche: body?.niche,
+      template: body?.template,
+      nextRunTime: body?.nextRunTime,
+      intervalMinutes: body?.intervalMinutes,
+      status: body?.status,
     },
-    { new: true }
-  )
+    { new: true } // Return the updated document
+  );
+
+  if (!subscription) {
+    return {
+      statusCode: 404,
+      headers: headers,
+      body: JSON.stringify({
+        message: `Subscription with ID ${subscription_id} not found or not owned by the user.`,
+      }),
+    };
+  }
 
   return {
     statusCode: 200,
     headers: headers,
     body: JSON.stringify({
-      message: `Subscription with id ${subscription_id} has been updated`,
+      message: `Subscription with ID ${subscription_id} has been updated`,
       subscription: subscription,
-      input: event,
     }),
-  }
-}
+  };
+};
 
 // DESTROY
 module.exports.delete_subscription = async (event) => {
-  // get subscription id from url path
-  const subscription_id = event.pathParameters.subscription_id
+  // Extract user ID and subscription ID
+  const userId = event.requestContext.authorizer.principalId;
+  const subscription_id = event.pathParameters.subscription_id;
 
-  // connect to database
-  await mongoose.connect()
+  // Connect to the database
+  await mongoose.connect();
 
-  // update subscription in database
-  const subscription = await Subscription.findByIdAndDelete(subscription_id)
+  // Delete subscription only if owned by the user
+  const subscription = await Subscription.findOneAndDelete({
+    _id: subscription_id,
+    ownerId: userId,
+  });
+
+  if (!subscription) {
+    return {
+      statusCode: 404,
+      headers: headers,
+      body: JSON.stringify({
+        message: `Subscription with ID ${subscription_id} not found or not owned by the user.`,
+      }),
+    };
+  }
 
   return {
     statusCode: 200,
     headers: headers,
     body: JSON.stringify({
-      message: `subscription ${subscription_id} has been deleted`,
+      message: `Subscription with ID ${subscription_id} has been deleted`,
       subscription: subscription,
-      input: event,
     }),
-  }
-}
+  };
+};
 
 
 module.exports.send_subscription_emails = async (event) => {

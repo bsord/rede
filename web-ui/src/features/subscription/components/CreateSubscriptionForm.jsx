@@ -9,6 +9,7 @@ import ContentPreview from './ContentPreview';
 import { templates, niches } from './data';
 
 const intervals = [
+  { label: '30 minutes', value: 30 },
   { label: 'day', value: 1440 }, // 1 day in minutes
   { label: '7 days', value: 10080 }, // 7 days in minutes
   { label: '30 days', value: 43200 }, // 30 days in minutes
@@ -59,17 +60,16 @@ const CreateSubscriptionForm = () => {
       intervalMinutes, // Include the interval value in minutes
     };
 
-    createSubscription(subscriptionData, {
-      onSuccess: (response) => {
-        console.log(response);
-        if(user){
+    if(user){
+      createSubscription(subscriptionData, {
+        onSuccess: (response) => {
+          console.log(response);
           navigate(`/subscriptions`);
-        } else {
-          navigate(`/auth/magic?email=${email}`);
-        }
-        
-      },
-    });
+        },
+      });
+    } else {
+      navigate(`/auth/magic?email=${email}`);
+    }
   };
 
   const handlePreview = () => {

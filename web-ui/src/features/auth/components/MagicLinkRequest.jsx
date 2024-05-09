@@ -16,6 +16,8 @@ export const MagicLinkRequest = ({initialEmail, codeSecret}) => {
   const [sent, setSent] = useState(false)
   const [email, setEmail] = useState(initialEmail || '')
   const [numericCode, setNumericCode] = useState('')
+  console.log(codeSecret)
+  console.log(email)
 
   const handleSendLink = () => {
     magicLink.mutate({email, codeSecret}, {
@@ -37,8 +39,8 @@ export const MagicLinkRequest = ({initialEmail, codeSecret}) => {
   }
 
   useEffect(()=>{
-    if(initialEmail){
-      magicLink.mutate({email: initialEmail}, {
+    if(initialEmail && codeSecret){
+      magicLink.mutate({email: initialEmail, codeSecret}, {
         onSuccess: () => {
           console.log('sent')
           setSent(true)

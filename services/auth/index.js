@@ -79,7 +79,7 @@ module.exports.verify_token = (event, context, callback) => {
   console.log(event)
   // check header or url parameters or post parameters for token
   const token = event.authorizationToken
-
+  console.log('token', token)
   if (!token) callback('Unauthorized')
 
   // verifies secret and checks exp
@@ -234,7 +234,7 @@ module.exports.requestMagicLink = async (event, context) => {
             ${numericCode}
         </div>
         <p style="font-size: 16px; margin-top: 20px;">If you prefer, you can also click the link below to log in or register:</p>
-        <a href="${magicLink}" style="text-decoration: none; color: #3498db; padding: 8px 16px; border: 1px solid #3498db; border-radius: 5px; background-color: #ecf0f1; display: inline-block; margin-bottom: 20px;">Log in/Register</a>
+        <a href="${magicLink}" style="text-decoration: none; color: #3498db; padding: 8px 16px; border: 1px solid #3498db; border-radius: 5px; background-color: #ecf0f1; display: inline-block; margin-bottom: 20px;">Log in</a>
         <p style="font-size: 14px; color: #777; margin-top: 20px;">If you did not request this, please ignore this email.</p>
     </div>
 </div>`,  // Do not include codeSecret in the email

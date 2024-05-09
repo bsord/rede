@@ -9,6 +9,7 @@ provider:
     MONGO_CONNECTION_STRING: ${ssm:/primary_db_connection_string}
     OPENAI_API_KEY: ${ssm:/openai_api_key}
     API_DOMAIN: "api.${ssm:/primary_domain_name}"
+    JWT_SECRET: 'rede-secret'
 
 plugins:
   - serverless-domain-manager
@@ -32,6 +33,9 @@ functions:
       - http:
           path: /
           method: post
+          authorizer:
+            arn: arn:aws:lambda:us-east-1:654654171580:function:auth-dev-verify-token
+            resultTtlInSeconds: 0
           cors: 
             origin: '*'
             headers: '*'
@@ -44,6 +48,9 @@ functions:
       - http:
           path: /
           method: get
+          authorizer:
+            arn: arn:aws:lambda:us-east-1:654654171580:function:auth-dev-verify-token
+            resultTtlInSeconds: 0
           cors: 
             origin: '*'
             headers: '*'
@@ -56,6 +63,9 @@ functions:
       - http:
           path: /{subscription_id}
           method: get
+          authorizer:
+            arn: arn:aws:lambda:us-east-1:654654171580:function:auth-dev-verify-token
+            resultTtlInSeconds: 0
           request:
             parameters:
               paths:
@@ -72,6 +82,9 @@ functions:
       - http:
           path: /{subscription_id}/events
           method: get
+          authorizer:
+            arn: arn:aws:lambda:us-east-1:654654171580:function:auth-dev-verify-token
+            resultTtlInSeconds: 0
           request:
             parameters:
               paths:
@@ -88,6 +101,9 @@ functions:
       - http:
           path: /{subscription_id}
           method: post
+          authorizer:
+            arn: arn:aws:lambda:us-east-1:654654171580:function:auth-dev-verify-token
+            resultTtlInSeconds: 0
           request:
             parameters:
               paths:
@@ -104,6 +120,9 @@ functions:
       - http:
           path: /{subscription_id}
           method: delete
+          authorizer:
+            arn: arn:aws:lambda:us-east-1:654654171580:function:auth-dev-verify-token
+            resultTtlInSeconds: 0
           request:
             parameters:
               paths:
