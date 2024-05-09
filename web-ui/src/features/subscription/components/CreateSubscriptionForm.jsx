@@ -7,6 +7,7 @@ import { useCreateAiContentPreview } from '../api/createAiContentPreview';
 import { useNavigate } from 'react-router-dom';
 import ContentPreview from './ContentPreview';
 import { templates, niches } from './data';
+import ReactGA from 'react-ga4';
 
 const intervals = [
   { label: '30 minutes', value: 30 },
@@ -61,6 +62,11 @@ const CreateSubscriptionForm = () => {
     };
 
     if(user){
+      ReactGA.event({
+        category: "subscription",
+        action: "create_subscription",
+        label: "Created Subscription",
+      });
       createSubscription(subscriptionData, {
         onSuccess: (response) => {
           console.log(response);

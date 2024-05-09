@@ -6,6 +6,9 @@ import { AppProvider } from './providers/App'
 import { useAuthenticatedUser } from './features/auth/api/getAuthenticatedUser'
 import { AuthRoutes } from './features/auth'
 import { SubscriptionRoutes } from './features/subscription'
+import ReactGA from 'react-ga4';
+import { Analytics } from './providers/Analytics'
+ReactGA.initialize('G-E4SFXQ77R7');
 
 const ProtectedRoute = ({ children }) => {
   const { data: user } = useAuthenticatedUser()
@@ -20,30 +23,32 @@ const router = createBrowserRouter([
   {
     path: '/subscriptions/*',
     element: (
-      <ProtectedRoute>
-        <SubscriptionRoutes />
-      </ProtectedRoute>
+      <Analytics>
+        <ProtectedRoute>
+          <SubscriptionRoutes />
+        </ProtectedRoute>
+      </Analytics>
     ),
     errorElement: <Error />,
   },
   {
     path: '/',
-    element: <Landing />,
+    element: <Analytics><Landing /></Analytics>,
     errorElement: <Error />,
   },
   {
     path: '/privacy',
-    element: <Privacy />,
+    element: <Analytics><Privacy /></Analytics>,
     errorElement: <Error />,
   },
   {
     path: '/auth/*',
-    element: <AuthRoutes />,
+    element: <Analytics><AuthRoutes /></Analytics>,
     errorElement: <Error />,
   },
   {
     path: '*',
-    element: <NotFound />,
+    element: <Analytics><NotFound /></Analytics>,
     errorElement: <Error />,
   },
 ])
