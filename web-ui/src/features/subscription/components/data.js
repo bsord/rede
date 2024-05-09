@@ -1,7 +1,7 @@
 export const templates = [
     {
         id: "tips",
-        name: "name",
+        name: "Tips",
         content: `
             <table width="100%" cellpadding="0" cellspacing="0" style="max-width: 600px; margin: auto; font-family: Arial, sans-serif; color: #f5f5f5; background-color: #1a1a1a; border-radius: 8px; overflow: hidden;">
                 <tr>

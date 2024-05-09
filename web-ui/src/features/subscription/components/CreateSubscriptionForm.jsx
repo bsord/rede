@@ -88,7 +88,7 @@ const CreateSubscriptionForm = () => {
   };
 
   useEffect(()=>{
-    handlePreview()
+    //handlePreview()
   },[niche, selectedTemplate])
   
 
