@@ -1,40 +1,29 @@
 
-import { useDeleteSubscription } from '../api/deleteSubscription';
-import { LinearProgress } from '../../../components/Elements';
-import { Input, Button } from '../../../components/Elements';
-import SubscriptionEvents from './SubscriptionEvents';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '../../../components/Elements';
 
-const SubscriptionListItem = ({subscription}) => {
-  const { mutate: deleteSubscription, isPending: isDeletePending, error: deleteError } = useDeleteSubscription();
-  const handleDelete = () => {
-    deleteSubscription(subscription._id, {
-      onSuccess: () => {
-        console.log('created subscription');
-        handleClose();
-      },
-    });
-  };
+const SubscriptionListItem = ({ subscription }) => {
+  const navigate = useNavigate();
+
   return (
-    <li className='border p-2 border-gray-400 rounded-lg'>
-      <div>email: {subscription.email}</div>
-      <div>status: {subscription.status} </div>
-      <div>niche: {subscription.niche}</div>
-      <div>id: {subscription._id}</div>
-      <div>type: {subscription.template.name}</div>
-      <div>Next Email: {subscription.nextRunTime}</div>
-      <div>Last Email: {subscription.lastProcessedTime}</div>
-      <div>every: {parseInt(subscription.intervalMinutes) / 1440} days</div>
-      <Button
-        onClick={() => {
-          handleDelete();
-        }}
-      >
-        x
+    <li className="border p-4 border-gray-400 rounded-lg shadow-md">
+      <div className="mb-2">
+        <strong>Type:</strong> {subscription.template.name}
+      </div>
+      <div className="mb-2">
+        <strong>Niche:</strong> {subscription.niche}
+      </div>
+      <div className="mb-2">
+        <strong>Status:</strong> {subscription.status.charAt(0).toUpperCase() + subscription.status.slice(1)}
+      </div>
+      <div className="mb-2">
+        <strong>Last Sent:</strong> {subscription.lastProcessedTime ? new Date(subscription.lastProcessedTime).toLocaleString() : 'N/A'}
+      </div>
+      <Button onClick={() => navigate(`/subscriptions/${subscription._id}/manage`)}>
+        Manage
       </Button>
-      {isDeletePending && <LinearProgress />}
-      <SubscriptionEvents subscriptionId={subscription._id}/>
     </li>
   );
-}
+};
 
-export default SubscriptionListItem
+export default SubscriptionListItem;

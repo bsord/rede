@@ -1,4 +1,4 @@
-import { axios } from '@/lib/axios';note
+import { axios } from '@/lib/axios';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export const updateSubscription = (subscription) => {
@@ -11,6 +11,7 @@ export const useUpdateSubscription = (config) => {
   return useMutation({
     ...config,
     onMutate: async (updatedSubscription) => {
+      console.log(await queryClient.getQueryData(['subscriptions']))
       // Cancel any outgoing refetches
       // (so they don't overwrite our optimistic update)
       await queryClient.cancelQueries({ queryKey: ['subscriptions'] });

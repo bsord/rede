@@ -6,17 +6,9 @@ import { useCreateSubscription } from '../api/createSubscription';
 import { useCreateAiContentPreview } from '../api/createAiContentPreview';
 import { useNavigate } from 'react-router-dom';
 import ContentPreview from './ContentPreview';
-import { templates, niches } from './data';
+import { templates, niches, intervals } from './data';
 import ReactGA from 'react-ga4';
 
-const intervals = [
-  { label: '30 minutes', value: 30 },
-  { label: 'day', value: 1440 }, // 1 day in minutes
-  { label: '7 days', value: 10080 }, // 7 days in minutes
-  { label: '30 days', value: 43200 }, // 30 days in minutes
-  { label: '60 days', value: 86400 }, // 60 days in minutes
-  { label: '90 days', value: 129600 }, // 90 days in minutes
-];
 import { useAuthenticatedUser } from '../../auth';
 const CreateSubscriptionForm = () => {
   const { data: user } = useAuthenticatedUser()
@@ -70,7 +62,7 @@ const CreateSubscriptionForm = () => {
       createSubscription(subscriptionData, {
         onSuccess: (response) => {
           console.log(response);
-          navigate(`/subscriptions`);
+          navigate(`/subscriptions/${response._id}/manage`);
         },
       });
     } else {
