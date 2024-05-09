@@ -224,7 +224,7 @@ module.exports.requestMagicLink = async (event, context) => {
     user.numericCodeExpiry = new Date(Date.now() + 300000);  // Numeric code expires in 5 minutes
     await user.save();
 
-    const magicLink = `https://yourdomain.com/auth/magic?token=${token}`;
+    const magicLink = `https://rede.io/auth/magic?token=${token}`;
     const emailData = {
       emailBody: `<div style="font-family: Arial, sans-serif; color: #333; background-color: #f5f5f5; padding: 20px; text-align: center;">
     <div style="background-color: #ffffff; border-radius: 8px; padding: 20px; margin: auto; max-width: 600px;">
