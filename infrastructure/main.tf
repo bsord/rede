@@ -257,3 +257,10 @@ resource "cloudflare_record" "mail_from_txt" {
   type    = "TXT"
   value   = "v=spf1 include:amazonses.com ~all"
 }
+
+resource "cloudflare_record" "bimi" {
+  zone_id = var.cloudflare_zone_id
+  name    = "default._bimi.${var.primary_domain}"
+  type    = "TXT"
+  value   = "v=BIMI1;l=https://rede.io/bimi.svg"
+}
