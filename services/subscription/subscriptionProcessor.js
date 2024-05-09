@@ -39,8 +39,17 @@ module.exports.process_subscription = async (subscription) => {
         // Extract the preview attribute as the email body content
         let emailBody = contentResponse.data.preview;
         emailBody = `
-            ${emailBody}
-            <div><a href="https://rede.io/subscriptions/${subscription._id}/unsubscribe">unsubscribe</a></div>
+            <div>
+                ${emailBody}
+                <table width="100%" cellpadding="0" cellspacing="0" style="max-width: 600px; margin: auto; font-family: Arial, sans-serif; background-color: #f4f4f4; color: #666;">
+                    <tr>
+                        <td style="padding: 10px 20px; text-align: center; font-size: 12px;">
+                            <p>If you would like to unsubscribe, please <a href="https://rede.io/subscriptions/${subscription._id}/unsubscribe" style="color: #337ab7; text-decoration: none;">click here</a>.</p>
+                            <p>Rede | 1 Daily Email, Insightful, AI, 50924 </p>
+                        </td>
+                    </tr>
+                </table>
+            </div>
         `
 
         
@@ -51,7 +60,7 @@ module.exports.process_subscription = async (subscription) => {
             emailBody,
             recipients: [email], // Wrap the single email in an array
             subject: 'The content you requested',
-            fromAddress: 'Rede <yoursubscription@rede.io>',
+            fromAddress: 'Friends at Rede <yourfriends@rede.io>',
         };
 
         // Make the second request to the email/send endpoint

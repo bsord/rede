@@ -25,7 +25,7 @@ module.exports.content_from_template = async (event) => {
 
     Niche:
     ${niche}
-    Ask: Based on the users niche, popuplate the provided html template. 
+    Ask: Based on the users niche, popuplate the provided html template. Do not include body or html wrapper elements. 
   `
 
   const openai_response = await openai.chat.completions.create({
