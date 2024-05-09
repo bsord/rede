@@ -193,47 +193,62 @@ const validateEmail = (email) => {
       /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
     )
 }
+function generateNumericCode() {
+  return Math.floor(100000 + Math.random() * 900000);  // Generates a 6-digit code
+}
 
 function generateMagicLinkToken(userId) {
   return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
-    expiresIn: 300 // expires in 5 minutes
+    expiresIn: 300,  // Expires in 5 minutes
   });
 }
-
 module.exports.requestMagicLink = async (event, context) => {
   context.callbackWaitsForEmptyEventLoop = false;
-  const { email } = JSON.parse(event.body); // You may want to capture a name or other details for new users
+  const { email, codeSecret } = JSON.parse(event.body);  // Assume codeSecret is generated on the frontend and sent here
 
   await connectToDatabase();
 
   try {
-    // Check if the user already exists by searching for their email
-    let user = await User.findOne({ email });
+    let user = await User.findOne({ email }).select('+numericCode +numericCodeExpiry +codeSecret');
 
-    // If the user doesn't exist, create a new user with the given email (and optional name)
     if (!user) {
-      user = await User.create({ email }); // password null as it's not required for magic link
+      user = new User({ email });  // Create a new user if not existent
     }
 
-    // Generate a magic link token
     const token = generateMagicLinkToken(user._id);
-    const magicLink = `https://rede.io/auth/magic?token=${token}`;
+    const numericCode = generateNumericCode();
 
-    // Prepare email data for the magic link
+    // Store the numeric code, code secret, and their expiry
+    user.numericCode = numericCode;
+    user.codeSecret = codeSecret;
+    user.numericCodeExpiry = new Date(Date.now() + 300000);  // Numeric code expires in 5 minutes
+    await user.save();
+
+    const magicLink = `https://yourdomain.com/auth/magic?token=${token}`;
     const emailData = {
-      emailBody: `<div>Click the link to ${user.password ? 'log in' : 'register'}: <a href="${magicLink}">${user.password ? 'log in' : 'register'}</a><div>`,
+      emailBody: `<div style="font-family: Arial, sans-serif; color: #333; background-color: #f5f5f5; padding: 20px; text-align: center;">
+    <div style="background-color: #ffffff; border-radius: 8px; padding: 20px; margin: auto; max-width: 600px;">
+        <h1 style="font-size: 20px; margin-bottom: 20px;">Welcome to Rede!</h1>
+        <p style="font-size: 16px; margin-bottom: 20px;">Here is your one-time login code:</p>
+        <div style="font-size: 24px; color: #e74c3c; background-color: #f9ebea; padding: 10px; border: 2px dashed #e74c3c; border-radius: 5px; margin: 20px;">
+            ${numericCode}
+        </div>
+        <p style="font-size: 16px; margin-top: 20px;">If you prefer, you can also click the link below to log in or register:</p>
+        <a href="${magicLink}" style="text-decoration: none; color: #3498db; padding: 8px 16px; border: 1px solid #3498db; border-radius: 5px; background-color: #ecf0f1; display: inline-block; margin-bottom: 20px;">Log in/Register</a>
+        <p style="font-size: 14px; color: #777; margin-top: 20px;">If you did not request this, please ignore this email.</p>
+    </div>
+</div>`,  // Do not include codeSecret in the email
       recipients: [email],
-      subject: 'Your Magic Link',
+      subject: 'Your Login Code',
       fromAddress: 'Rede <yoursubscription@rede.io>',
     };
 
-    // Send the magic link email using the email service
     await axios.post(`https://${process.env.API_DOMAIN}/email/send`, emailData);
 
     return {
       statusCode: 200,
       headers: headers,
-      body: JSON.stringify({ message: 'Magic link sent successfully!' }),
+      body: JSON.stringify({ message: 'Magic link requested successfully. Use your numeric code to log in.' }),
     };
   } catch (err) {
     console.error(err);
@@ -244,41 +259,59 @@ module.exports.requestMagicLink = async (event, context) => {
     };
   }
 };
-
 module.exports.magicLinkLogin = async (event, context) => {
   context.callbackWaitsForEmptyEventLoop = false;
+  const { token, numericCode, email, codeSecret } = JSON.parse(event.body);
 
-  // Parse the JSON payload to get the token
-  const { token } = JSON.parse(event.body);
-
-  // Validate if the token is provided
-  if (!token) {
-    return {
-      statusCode: 401,
-      headers: headers,
-      body: JSON.stringify({ message: 'No token provided.' }),
-    };
-  }
+  await connectToDatabase();
 
   try {
-    // Verify the JWT token with the secret key
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    if (numericCode && email && codeSecret) {
+      const user = await User.findOne({ email }).select('+numericCode +numericCodeExpiry +codeSecret');
 
-    // Generate a new signed token for the authenticated session
-    const newToken = signToken(decoded.id);
+      if (!user || user.numericCode !== parseInt(numericCode, 10) || user.codeSecret !== codeSecret || new Date() > user.numericCodeExpiry) {
+        return {
+          statusCode: 401,
+          headers: headers,
+          body: JSON.stringify({ message: 'Invalid or expired numeric code or code secret.' }),
+        };
+      }
 
-    // Return a response with the new token
+      const newToken = signToken(user._id);
+
+      // Clear the numeric code and code secret after use
+      user.numericCode = null;
+      user.codeSecret = null;
+      user.numericCodeExpiry = null;
+      await user.save();
+
+      return {
+        statusCode: 200,
+        headers: headers,
+        body: JSON.stringify({ auth: true, token: newToken }),
+      };
+    } else if (token) {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const newToken = signToken(decoded.id);
+
+      return {
+        statusCode: 200,
+        headers: headers,
+        body: JSON.stringify({ auth: true, token: newToken }),
+      };
+    }
+
     return {
-      statusCode: 200,
+      statusCode: 400,
       headers: headers,
-      body: JSON.stringify({ auth: true, token: newToken }),
+      body: JSON.stringify({ message: 'No valid authentication method provided.' }),
     };
   } catch (error) {
-    // Handle any errors related to token verification
+    console.error('Error logging in:', error);
     return {
       statusCode: 401,
       headers: headers,
-      body: JSON.stringify({ message: 'Invalid or expired token.' }),
+      body: JSON.stringify({ message: 'Authentication failed.' }),
     };
   }
 };

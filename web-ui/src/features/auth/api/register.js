@@ -25,7 +25,7 @@ export const registerFn = async (data) => {
 export const useRegister = (config) => {
   return useMutation({
     onSuccess: (user) => {
-      queryClient.setQueryData('authenticated-user', user)
+      queryClient.setQueryData(['authenticated-user'], user)
     },
     ...config,
     mutationFn: registerFn,

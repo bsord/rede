@@ -20,7 +20,9 @@ const router = createBrowserRouter([
   {
     path: '/subscriptions/*',
     element: (
-      <SubscriptionRoutes />
+      <ProtectedRoute>
+        <SubscriptionRoutes />
+      </ProtectedRoute>
     ),
     errorElement: <Error />,
   },

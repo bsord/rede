@@ -25,7 +25,7 @@ export const loginFn = async (data) => {
 export const useLogin = (config) => {
   return useMutation({
     onSuccess: (user) => {
-      queryClient.setQueryData('authenticated-user', user)
+      queryClient.setQueryData(['authenticated-user'], user)
     },
     ...config,
     mutationFn: loginFn,

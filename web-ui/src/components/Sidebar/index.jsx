@@ -16,7 +16,6 @@ import {
 export const Sidebar = () => {
   const logout = useLogout()
   const { data: user } = useAuthenticatedUser()
-
   return (
     <div className="h-screen w-full max-w-[20rem] flex flex-col p-4 shadow-sm bg-white border border-blue-gray-100 justify-between rounded-none ">
       <div>

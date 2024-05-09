@@ -11,7 +11,6 @@ export const magic = (data) => {
 async function saveTokenFromResponse(data) {
   const { token } = data
   storage.auth.setToken(token)
-  console.log(data)
   return token
 }
 
@@ -26,7 +25,7 @@ export const magicFn = async (data) => {
 export const useMagic = (config) => {
   return useMutation({
     onSuccess: (user) => {
-      queryClient.setQueryData('authenticated-user', user)
+      queryClient.setQueryData(['authenticated-user'], user)
     },
     ...config,
     mutationFn: magicFn,

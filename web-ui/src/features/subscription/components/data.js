@@ -1,12 +1,12 @@
 export const templates = [
     {
-        "id":"three_tips",
+        "id":"tips",
         "name": "Tips",
         "content": "<h1>[title]</h1><h2>[subtext]</h2><p>[importance_of_topic]</p><ul><li><h3>[tip_1]</h3><p>[tip_1_explanation]</p></li><li><h3>[tip_2]</h3><p>[tip_2_explanation]</p></li><li><h3>[tip_3]</h3><p>[tip_3_explanation]</p></li></ul><p>[closing thought]</p>"
     },
     {
-        "id":"quote_of_the_day",
-        "name": "Gratitude Quotes",
+        "id":"quotes",
+        "name": "Quotes",
         "content": "<h1>[title]</h1><h3>[subtext]</h3><blockquote>[Quote of the day]</blockquote><p>[closing thought]</p>"
     },
     {
