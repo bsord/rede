@@ -3,8 +3,9 @@ import { useLocation } from 'react-router-dom';
 import { Button, LinearProgress, Typography } from '../../../components/Elements';
 import useUnsubscribe from '../../subscription/api/useUnsubscribe';  // Adjust the path as needed
 import { CenteredLayout } from '../../../components/Layouts';
-
+import { useNavigate } from 'react-router-dom';
 export const Unsubscribe = () => {
+  const navigate = useNavigate()
   const location = useLocation();
   const [unsubscribed, setUnsubscribed] = useState(false);
   const { mutate: unsubscribe, isLoading, error } = useUnsubscribe();
@@ -42,7 +43,9 @@ export const Unsubscribe = () => {
   <     div className='flex justify-center items-center h-screen w-full'>
           <div className='bg-white p-4 rounded-xl w-1/2 text-center'>
             Successfully unsubscribed!
+            <Button onClick={()=>{navigate('/')}}>Homepage</Button>
           </div>
+          
         </div>
       )}
     </CenteredLayout>

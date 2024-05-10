@@ -226,18 +226,18 @@ module.exports.requestMagicLink = async (event, context) => {
 
     const magicLink = `https://rede.io/auth/magic?token=${token}`;
     const emailData = {
-      emailBody: `<div style="font-family: Arial, sans-serif; color: #333; background-color: #f5f5f5; padding: 20px; text-align: center;">
-    <div style="background-color: #ffffff; border-radius: 8px; padding: 20px; margin: auto; max-width: 600px;">
-        <h1 style="font-size: 20px; margin-bottom: 20px;">Welcome to Rede!</h1>
-        <p style="font-size: 16px; margin-bottom: 20px;">Here is your one-time login code:</p>
-        <div style="font-size: 24px; color: #e74c3c; background-color: #f9ebea; padding: 10px; border: 2px dashed #e74c3c; border-radius: 5px; margin: 20px;">
-            ${numericCode}
+      emailBody: `
+        <div style="font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'; color: #333; background-color: #f5f5f5; padding: 20px; text-align: center;">
+          <div style="background-color: #ffffff; border-radius: 8px; padding: 20px; margin: auto; max-width: 600px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+              <h1 style="font-size: 20px; margin-bottom: 20px; color: #333;">Welcome to Rede!</h1>
+              <p style="font-size: 16px; margin-bottom: 20px; color: #666;">Here is your one-time login code:</p>
+              <div style="font-size: 24px; color: #333; background-color: #ebebeb; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin: 20px;">
+                  ${numericCode}
+              </div>
+              <p style="font-size: 14px; color: #777; margin-top: 20px;">If you did not request this, please ignore this email.</p>
+          </div>
         </div>
-        <p style="font-size: 16px; margin-top: 20px;">If you prefer, you can also click the link below to log in or register:</p>
-        <a href="${magicLink}" style="text-decoration: none; color: #3498db; padding: 8px 16px; border: 1px solid #3498db; border-radius: 5px; background-color: #ecf0f1; display: inline-block; margin-bottom: 20px;">Log in</a>
-        <p style="font-size: 14px; color: #777; margin-top: 20px;">If you did not request this, please ignore this email.</p>
-    </div>
-</div>`,  // Do not include codeSecret in the email
+      `,  // Do not include codeSecret in the email
       recipients: [email],
       subject: 'Your Login Code',
       fromAddress: 'Rede <yoursubscription@rede.io>',

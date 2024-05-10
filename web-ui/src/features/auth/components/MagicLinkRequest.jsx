@@ -16,13 +16,10 @@ export const MagicLinkRequest = ({initialEmail, codeSecret}) => {
   const [sent, setSent] = useState(false)
   const [email, setEmail] = useState(initialEmail || '')
   const [numericCode, setNumericCode] = useState('')
-  console.log(codeSecret)
-  console.log(email)
 
   const handleSendLink = () => {
     magicLink.mutate({email, codeSecret}, {
       onSuccess: () => {
-        console.log('sent')
         setSent(true)
       },
     })
@@ -42,7 +39,6 @@ export const MagicLinkRequest = ({initialEmail, codeSecret}) => {
     if(initialEmail && codeSecret){
       magicLink.mutate({email: initialEmail, codeSecret}, {
         onSuccess: () => {
-          console.log('sent')
           setSent(true)
         },
       })
@@ -97,13 +93,8 @@ export const MagicLinkRequest = ({initialEmail, codeSecret}) => {
       <div className="w-full p-4">
         <div className="text-center">
           <div className='mb-4'>
-          Click the link in your email to complete login.
-          
+            We sent a verification code. Check your email.
           </div>
-          <div className='mb-4'>
-            Alternatively, enter the code provided in the email:
-          </div>
-
           <Input
             required
             id="numericCode"
@@ -113,6 +104,8 @@ export const MagicLinkRequest = ({initialEmail, codeSecret}) => {
             autoFocus
             value={numericCode}
             onChange={(e)=>{setNumericCode(e.currentTarget.value)}}
+            inputMode="numeric"
+            pattern="[0-9]*"
           />
           <Button type="button" onClick={()=>{handleLogin()}}>
             Login
