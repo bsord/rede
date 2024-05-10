@@ -5,7 +5,7 @@ export const CreateSubscription = () => {
   return (
     <Layout title="Create New Subscription">
       <div className='flex justify-center items-center h-full'>
-        <div className='bg-white p-4 rounded-xl w-1/2'>
+        <div className='bg-white p-4 rounded-xl md:w-1/2'>
           <CreateSubscriptionForm/>
         </div>
       </div>

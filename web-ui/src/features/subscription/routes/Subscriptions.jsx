@@ -6,7 +6,7 @@ export const Subscriptions = () => {
     <Layout title="Subscriptions">
       <div className='flex w-full items-center justify-center my-4'>
         <div className='flex justify-center items-center w-full'>
-          <div className='bg-white p-4 rounded-xl w-1/2'>
+          <div className='bg-white p-4 rounded-xl md:w-1/2'>
             <SubscriptionList/>
           </div>
         </div>

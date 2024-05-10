@@ -48,6 +48,7 @@ export const MagicLinkRequest = ({initialEmail, codeSecret}) => {
   if(!sent && !initialEmail){
     return (
         <div className="w-full p-4">
+          
           <div className="text-center">
             <Typography variant="h2" className="mb-4">
               Login
@@ -93,8 +94,10 @@ export const MagicLinkRequest = ({initialEmail, codeSecret}) => {
       <div className="w-full p-4">
         <div className="text-center">
           <div className='mb-4'>
+            <Typography variant="h3">Check your email!</Typography>
             We sent a verification code. Check your email.
           </div>
+          
           <Input
             required
             id="numericCode"

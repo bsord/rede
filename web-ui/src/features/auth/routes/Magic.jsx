@@ -4,6 +4,7 @@ import { useMagic } from '../api/magic';
 import { Layout } from '../components/Layout';
 import { Button } from '@/components/Elements';
 import { MagicLinkRequest } from '../components/MagicLinkRequest';
+import { CenteredLayout } from '../../../components/Layouts';
 
 export const Magic = () => {
     const [searchParams] = useSearchParams();
@@ -29,17 +30,20 @@ export const Magic = () => {
     const codeSecret = Math.floor(100000 + Math.random() * 900000).toString();
 
     return (
-        <Layout title="Login with magic link">
-            {token ? (
-                <>
-                    {isPending && <div>Signing you in...</div>}
-                    {error && <div>There was a problem signing you in.</div>}
-                </>
-            ) : (
-                <>
-                    <MagicLinkRequest initialEmail={email} codeSecret={codeSecret} />
-                </>
-            )}
-        </Layout>
+        <CenteredLayout title="Login with magic link">
+            <div className="text-center gap-x-4 max-w-lg w-full mt-4">
+                
+                {token ? (
+                    <>
+                        {isPending && <div>Signing you in...</div>}
+                        {error && <div>There was a problem signing you in.</div>}
+                    </>
+                ) : (
+                    <>
+                        <MagicLinkRequest initialEmail={email} codeSecret={codeSecret} /> 
+                    </>
+                )}
+            </div>
+        </CenteredLayout>
     );
 };
