@@ -55,6 +55,18 @@ functions:
             origin: '*'
             headers: '*'
 
+  unsubscribe:
+    handler: index.unsubscribe
+    timeout: 30
+    memorySize: 128
+    events:
+      - http:
+          path: /unsubscribe
+          method: post
+          cors:
+            origin: '*'
+            headers: '*'
+
   getSubscriptionById:
     timeout: 30
     handler: index.get_subscription_by_id
@@ -140,3 +152,4 @@ functions:
       - schedule:
           rate: rate(5 minutes)
           enabled: true
+  

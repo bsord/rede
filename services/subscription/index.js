@@ -2,11 +2,14 @@ const mongoose = require('./db')
 const Subscription = require('./models/subscription')
 const SubscriptionEvent = require('./models/subscription_event')
 const SubscriptionProcessor = require("./subscriptionProcessor");
+const jwt = require('jsonwebtoken')
 
 const headers = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Credentials': true,
 }
+
+const JWT_SECRET = process.env.JWT_SECRET;
 
 // CREATE
 module.exports.add_subscription = async (event) => {
@@ -222,3 +225,46 @@ module.exports.send_subscription_emails = async (event) => {
     await SubscriptionProcessor.process_subscription(subscription);
   }
 }
+
+
+
+
+// Unsubscribe from the subscription
+module.exports.unsubscribe = async (event) => {
+    await mongoose.connect();
+    try {
+        // Parse the token from the POST request body
+        const { token } = JSON.parse(event.body);
+
+        // Verify the token using the secret key
+        const decoded = jwt.verify(token, JWT_SECRET);
+        console.log(decoded)
+        const subscriptionId = decoded.sub;
+
+        // Update the subscription status to inactive
+        const updatedSubscription = await Subscription.findByIdAndUpdate(subscriptionId, {
+            status: 'inactive'
+        }, { new: true });
+
+        if (!updatedSubscription) {
+            return {
+                statusCode: 404,
+                headers,
+                body: JSON.stringify({ message: 'Subscription not found.' })
+            };
+        }
+
+        return {
+            statusCode: 200,
+            headers,
+            body: JSON.stringify({ message: 'You have successfully unsubscribed.' })
+        };
+    } catch (error) {
+      console.log(error)
+        return {
+            statusCode: 400,
+            headers,
+            body: JSON.stringify({ message: 'Invalid or expired token.' })
+        };
+    }
+};

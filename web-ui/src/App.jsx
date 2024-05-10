@@ -8,6 +8,8 @@ import { AuthRoutes } from './features/auth'
 import { SubscriptionRoutes } from './features/subscription'
 import ReactGA from 'react-ga4';
 import { Analytics } from './providers/Analytics'
+import { Unsubscribe } from './features/misc/routes/Unsubscribe';
+
 ReactGA.initialize('G-E4SFXQ77R7');
 
 const ProtectedRoute = ({ children }) => {
@@ -27,6 +29,15 @@ const router = createBrowserRouter([
         <ProtectedRoute>
           <SubscriptionRoutes />
         </ProtectedRoute>
+      </Analytics>
+    ),
+    errorElement: <Error />,
+  },
+  {
+    path: '/unsubscribe',
+    element: (
+      <Analytics>
+        <Unsubscribe/>
       </Analytics>
     ),
     errorElement: <Error />,
