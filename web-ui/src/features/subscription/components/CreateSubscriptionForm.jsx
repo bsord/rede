@@ -151,7 +151,7 @@ const CreateSubscriptionForm = () => {
           {subscriptionError && <span>There was an error</span>}
           
           {contentPreviewIsPending && <LinearProgress />}
-          {contentPreview && <><Typography variant="h5">Preview:</Typography><ContentPreview htmlContent={contentPreview} /></>}
+          {contentPreview && <><Typography variant="h5">Preview:</Typography>{contentPreview.subject}<ContentPreview htmlContent={contentPreview.content} /></>}
           
         </div>
         

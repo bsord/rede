@@ -77,8 +77,6 @@ export const niches = [
   ]
 
 export const intervals = [
-  { label: '30 minutes', value: 30 },
-  { label: 'day', value: 1440 }, // 1 day in minutes
   { label: '7 days', value: 10080 }, // 7 days in minutes
   { label: '30 days', value: 43200 }, // 30 days in minutes
   { label: '60 days', value: 86400 }, // 60 days in minutes

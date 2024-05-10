@@ -7,30 +7,30 @@ export const createAiContentPreview = (data) => {
 };
 
 export const createAiContentPreviewFn = async (data) => {
-  const { preview } = await createAiContentPreview(data);
-  return preview ;
+  const response = await createAiContentPreview(data);
+  return response ;
 };
 
 export const useCreateAiContentPreview = (config) => {
   return useMutation({
     onMutate: async (newAiContentPreview) => {
-      await queryClient.cancelQueries(['aiContentPreviews']);
+      await queryClient.cancelQueries(['aiContentPreview']);
 
-      const previousAiContentPreviews = queryClient.getQueryData(['aiContentPreviews']);
+      const previousAiContentPreviews = queryClient.getQueryData(['aiContentPreview']);
 
-      queryClient.setQueryData(['aiContentPreviews'], [...(previousAiContentPreviews || []), newAiContentPreview]);
+      queryClient.setQueryData(['aiContentPreview'], [...(previousAiContentPreviews || []), newAiContentPreview]);
       console.log(previousAiContentPreviews);
       return { previousAiContentPreviews };
     },
     onError: (_, __, context) => {
       console.log(_)
       if (context?.previousAiContentPreviews) {
-        queryClient.setQueryData(['aiContentPreviews'], context.previousAiContentPreviews);
+        queryClient.setQueryData(['aiContentPreview'], context.previousAiContentPreviews);
       }
     },
     onSuccess: (aiContentPreviews) => {
       console.log(aiContentPreviews);
-      queryClient.invalidateQueries(['aiContentPreviews']);
+      queryClient.invalidateQueries(['aiContentPreview']);
     },
     ...config,
     mutationFn: createAiContentPreviewFn,

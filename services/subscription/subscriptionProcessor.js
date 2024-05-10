@@ -37,7 +37,8 @@ module.exports.process_subscription = async (subscription) => {
         }
 
         // Extract the preview attribute as the email body content
-        let emailBody = contentResponse.data.preview;
+        let emailBody = contentResponse.data.content;
+        let emailSubject = contentResponse.data.subject;
         emailBody = `
             <div>
                 ${emailBody}
@@ -59,7 +60,7 @@ module.exports.process_subscription = async (subscription) => {
         const emailData = {
             emailBody,
             recipients: [email], // Wrap the single email in an array
-            subject: 'The content you requested',
+            subject: emailSubject,
             fromAddress: 'Friends at Rede <yourfriends@rede.io>',
         };
 
