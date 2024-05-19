@@ -11,7 +11,7 @@ export const useUpdateSubscription = (config) => {
   return useMutation({
     ...config,
     onMutate: async (updatedSubscription) => {
-      console.log(await queryClient.getQueryData(['subscriptions']))
+      console.log(await queryClient.getQueryData(['subscriptions']));
       // Cancel any outgoing refetches
       // (so they don't overwrite our optimistic update)
       await queryClient.cancelQueries({ queryKey: ['subscriptions'] });
@@ -20,7 +20,12 @@ export const useUpdateSubscription = (config) => {
       const previousSubscriptions = queryClient.getQueryData(['subscriptions']);
 
       // Optimistically update to the new value
-      queryClient.setQueryData(['subscriptions'], (old) => [...old, updatedSubscription]);
+      queryClient.setQueryData(['subscriptions'], (old) => {
+        if (!Array.isArray(old)) {
+          return [updatedSubscription];
+        }
+        return [...old, updatedSubscription];
+      });
 
       // Return a context object with the snapshotted value
       return { previousSubscriptions };

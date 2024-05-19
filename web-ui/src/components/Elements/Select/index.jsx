@@ -2,16 +2,21 @@ import React, { useState, useRef, useEffect } from 'react';
 
 export const Select = ({ children, name, value, onChange, className, placeholder, ...rest }) => {
     const [isOpen, setIsOpen] = useState(false);
-    const [isFocused, setIsFocused] = useState(false);  // Track whether the component is focused
-    const [selectedValue, setSelectedValue] = useState(value);
+    const [isFocused, setIsFocused] = useState(false);
+    const [selectedValue, setSelectedValue] = useState(value); // Initialize with prop value
     const dropdownRef = useRef(null);
     const toggleRef = useRef(null);
+
+    // Sync selectedValue with the value prop
+    useEffect(() => {
+        setSelectedValue(value);
+    }, [value]);
 
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
                 setIsOpen(false);
-                setIsFocused(false); // Remove focus when clicking outside
+                setIsFocused(false);
             }
         };
         document.addEventListener('mousedown', handleClickOutside);
@@ -29,7 +34,7 @@ export const Select = ({ children, name, value, onChange, className, placeholder
 
     const toggleDropdown = () => {
         setIsOpen(!isOpen);
-        setIsFocused(true);  // Set focus state when toggling
+        setIsFocused(true);
     };
 
     const handleOptionClick = (optionValue) => {
