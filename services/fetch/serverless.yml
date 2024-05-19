@@ -1,4 +1,4 @@
-service: email
+service: fetch
 frameworkVersion: '3'
 
 provider:
@@ -7,11 +7,10 @@ provider:
   region: us-east-1
   environment:
     MONGO_CONNECTION_STRING: ${ssm:/primary_db_connection_string}
-  iamRoleStatements:
-    - Effect: Allow
-      Action:
-        - ses:SendEmail
-      Resource: "*"
+    REDDIT_CLIENT_ID: ${ssm:/reddit_client_id}
+    REDDIT_SECRET_KEY: ${ssm:/reddit_secret_key}
+    REDDIT_USERNAME: ${ssm:/reddit_username}
+    REDDIT_PASSWORD: ${ssm:/reddit_password}
 
 
 plugins:
@@ -21,32 +20,20 @@ custom:
   customDomain:
     domainName: "api.${ssm:/primary_domain_name}"
     certificateArn: ${ssm:/primary_domain_cert_arn}
-    basePath: "email"
+    basePath: "fetch"
     endpointType: 'regional'
     securityPolicy: tls_1_2
     apiType: rest
 
 functions:
-  sendEmails:
+  fetchRedditPosts:
     timeout: 30
-    handler: index.send_email
+    handler: index.fetch_reddit_posts
     logRetentionInDays: 30
     events:
       - http:
-          path: /send
+          path: /reddit/posts
           method: post
           cors: 
-            origin: '*'
-            headers: '*'
-
-  verifyEmail:
-    timeout: 30
-    handler: index.verify_email
-    logRetentionInDays: 30
-    events:
-      - http:
-          path: /verify_email_address
-          method: post
-          cors:
             origin: '*'
             headers: '*'

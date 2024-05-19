@@ -6,6 +6,7 @@ import { useDeleteSubscription } from '../api/deleteSubscription';
 import { Button, LinearProgress } from '../../../components/Elements';
 import SubscriptionEvents from './SubscriptionEvents';
 import { intervals } from './data';
+import { Select } from '../../../components/Elements/Select';
 
 // Helper function to format dates nicely
 const formatDate = (dateString) => {
@@ -25,15 +26,14 @@ const ManageSubscription = ({ subscriptionId, onSubscriptionDeleted }) => {
   const [status, setStatus] = useState('');
   const [isUpdating, setIsUpdating] = useState(false);
 
-  // Initialize state with subscription values once data is available
   useEffect(() => {
     if (!isLoading && subscription) {
       setIntervalMinutes(subscription.intervalMinutes);
       setStatus(subscription.status);
     }
+    
   }, [subscription, isLoading]);
 
-  // Update handler for interval and status change
   const handleUpdate = () => {
     setIsUpdating(true);
     const updatedSubscription = {
@@ -51,7 +51,6 @@ const ManageSubscription = ({ subscriptionId, onSubscriptionDeleted }) => {
     });
   };
 
-  // Delete handler
   const handleDelete = () => {
     deleteSubscription(subscription._id, {
       onSuccess: () => {
@@ -74,7 +73,7 @@ const ManageSubscription = ({ subscriptionId, onSubscriptionDeleted }) => {
   }
 
   return (
-    <div className="border p-4 border-gray-300 rounded-lg shadow-md bg-white">
+    <div className="border p-4 border-gray-300 bg-white rounded-lg shadow-md md:w-1/2 w-full">
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700">Type:</label>
         <span className="text-lg font-semibold">{subscription.template.name}</span>
@@ -93,31 +92,29 @@ const ManageSubscription = ({ subscriptionId, onSubscriptionDeleted }) => {
       </div>
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700">Interval:</label>
-        <select
+        <Select
           value={intervalMinutes}
           onChange={(e) => setIntervalMinutes(e.target.value)}
-          className="border rounded-md p-2 w-full focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
         >
           {intervals.map((interval) => (
             <option key={interval.value} value={interval.value}>
               {interval.label}
             </option>
           ))}
-        </select>
+        </Select>
       </div>
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700">Status:</label>
-        <select
+        <Select
           value={status}
           onChange={(e) => setStatus(e.target.value)}
-          className="border rounded-md p-2 w-full focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
         >
           {statuses.map((statusOption) => (
             <option key={statusOption} value={statusOption}>
-              {statusOption.charAt(0).toUpperCase() + statusOption.slice(1)}
+              {statusOption}
             </option>
           ))}
-        </select>
+        </Select>
       </div>
 
       <Button

@@ -264,3 +264,31 @@ resource "cloudflare_record" "bimi" {
   type    = "TXT"
   value   = "v=BIMI1;l=https://rede.io/bimi.svg"
 }
+
+resource "aws_ssm_parameter" "reddit_client_id" {
+  name        = "reddit_client_id"
+  type        = "SecureString"
+  value       = var.reddit_client_id
+  description = "Reddit app client ID"
+}
+
+resource "aws_ssm_parameter" "reddit_secret_key" {
+  name        = "reddit_secret_key"
+  type        = "SecureString"
+  value       = var.reddit_secret_key
+  description = "Reddit app secret key"
+}
+
+resource "aws_ssm_parameter" "reddit_username" {
+  name        = "reddit_username"
+  type        = "SecureString"
+  value       = var.reddit_username
+  description = "Username tied to the Reddit app developer account"
+}
+
+resource "aws_ssm_parameter" "reddit_password" {
+  name        = "reddit_password"
+  type        = "SecureString"
+  value       = var.reddit_password
+  description = "Password for Reddit app developer account"
+}

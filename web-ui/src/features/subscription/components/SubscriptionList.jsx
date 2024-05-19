@@ -19,7 +19,7 @@ const SubscriptionList = () => {
   }
 
   return (
-    <ul className='flex flex-col space-y-2'>
+    <ul className='flex flex-col space-y-4 md:w-1/2 w-full'>
       {subscriptions?.map((subscription, key) => {
         return (
           <SubscriptionListItem key={key} subscription={subscription}/>

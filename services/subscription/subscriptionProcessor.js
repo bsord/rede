@@ -20,37 +20,45 @@ module.exports.process_subscription = async (subscription) => {
             throw new Error('Missing required attributes in the subscription object');
         }
 
-        // Create the JWT token with relevant information
+        // Create JWT
         const unsubscribeToken = jwt.sign(
             {
-                sub: subscriptionId, // Subscription ID
-                type: 'subscription', // Subscription type for specific handling
+                sub: subscriptionId, 
+                type: 'subscription', 
             },
             JWT_SECRET
         );
 
+        const dataUrl = `https://${API_DOMAIN}/fetch/reddit/posts`;
         const contentUrl = `https://${API_DOMAIN}/ai/content-from-template`;
         const emailUrl = `https://${API_DOMAIN}/email/send`;
 
-        // Make a request to retrieve content from the template
+        // fetch useful data
+        const dataResponse = await axios.post(dataUrl, {
+            subreddit: niche
+        });
+        console.log(dataResponse)
+        const stringifiedData = JSON.stringify(dataResponse.data)
+
+        // get email content body made from template + ai generated content
         const contentResponse = await axios.post(contentUrl, {
-            template: template.content,
+            template: template,
             niche,
+            supportingData: stringifiedData
         });
 
-        // Ensure that the response is successful
         if (contentResponse.status !== 200) {
             throw new Error(`Failed to get content from template: ${contentResponse.statusText}`);
         }
 
-        // Extract email content and subject
+        // define email params
         let emailBody = contentResponse.data.content;
         let emailSubject = contentResponse.data.subject;
 
-        // Create the unsubscribe link
+        // create unsubscribe link
         const unsubscribeLink = `https://rede.io/unsubscribe?token=${unsubscribeToken}`;
 
-        // Add the unsubscribe link to the email body
+        // add footer html to all messages
         emailBody = `
             <div>
                 ${emailBody}
@@ -67,7 +75,6 @@ module.exports.process_subscription = async (subscription) => {
 
         console.log(`Email Body (Preview): ${emailBody}`);
 
-        // Prepare the email data
         const emailData = {
             emailBody,
             recipients: [email],
@@ -78,14 +85,12 @@ module.exports.process_subscription = async (subscription) => {
         // Send the email using the email API
         const emailResponse = await axios.post(emailUrl, emailData);
 
-        // Ensure that the email was sent successfully
         if (emailResponse.status !== 200) {
             throw new Error(`Failed to send email: ${emailResponse.statusText}`);
         }
 
         console.log('Subscription processing and email sending completed successfully');
 
-        // Log the event as successful
         await SubscriptionEvent.create({
             subscriptionId: subscription._id,
             type: 'email',
@@ -93,7 +98,7 @@ module.exports.process_subscription = async (subscription) => {
             status: 'success',
         });
 
-        // Update subscription's last processed time and next run time
+        // set last processedtime
         const nextRunTime = new Date(now.getTime() + intervalMinutes * 60000);
         await Subscription.findByIdAndUpdate(subscription._id, {
             lastProcessedTime: now,
@@ -101,7 +106,7 @@ module.exports.process_subscription = async (subscription) => {
         });
 
     } catch (error) {
-        // Log the event as a failure using subscription._id directly
+        // Log the event as a failure
         await SubscriptionEvent.create({
             subscriptionId: subscription._id,
             type: 'email',

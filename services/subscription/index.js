@@ -11,18 +11,16 @@ const headers = {
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
-// CREATE
+
 module.exports.add_subscription = async (event) => {
-  // Get user ID from authorizer
+
   const userId = event.requestContext.authorizer.principalId;
   
-  // Parse the event body
   var body = JSON.parse(event.body);
 
-  // Connect to the database
   await mongoose.connect();
 
-  // Create the new subscription with the owner ID
+  // create new sub, with requestor as owner
   const subscription = await Subscription.create({
     email: body.email,
     niche: body.niche,
@@ -31,7 +29,7 @@ module.exports.add_subscription = async (event) => {
     intervalMinutes: body.intervalMinutes || 1440,
     lastProcessedTime: null,
     status: 'active',
-    ownerId: userId // Set the ownerId here
+    ownerId: userId 
   });
 
   // Send the first email
@@ -50,13 +48,11 @@ module.exports.add_subscription = async (event) => {
 
 // READ
 module.exports.get_subscriptions = async (event) => {
-  // Get user ID from authorizer
+
   const userId = event.requestContext.authorizer.principalId;
   
-  // Connect to the database
   await mongoose.connect();
 
-  // Retrieve subscriptions only for this user
   const subscriptions = await Subscription.find({ ownerId: userId });
 
   return {
@@ -89,14 +85,13 @@ module.exports.get_subscription_by_id = async (event) => {
 };
 
 module.exports.get_subscription_events_by_subscription_id = async (event) => {
-  // Extract user ID and subscription ID
+
   const userId = event.requestContext.authorizer.principalId;
   const subscription_id = event.pathParameters.subscription_id;
 
-  // Connect to the database
   await mongoose.connect();
 
-  // Retrieve the subscription, ensuring it belongs to the requesting user
+  // get subscription, if owned by user making requeste
   const subscription = await Subscription.findOne({
     _id: subscription_id,
     ownerId: userId,
@@ -112,7 +107,7 @@ module.exports.get_subscription_events_by_subscription_id = async (event) => {
     };
   }
 
-  // If the subscription is valid, retrieve the events
+  // get events for subscription
   const subscriptionEvents = await SubscriptionEvent.find({
     subscriptionId: subscription_id,
   }).sort({ createdAt: -1 });
@@ -128,17 +123,15 @@ module.exports.get_subscription_events_by_subscription_id = async (event) => {
 };
 
 module.exports.update_subscription = async (event) => {
-  // Extract user ID and subscription ID
+
   const userId = event.requestContext.authorizer.principalId;
   const subscription_id = event.pathParameters.subscription_id;
 
-  // Parse the request body
   const body = JSON.parse(event.body);
 
-  // Connect to the database
   await mongoose.connect();
 
-  // Update subscription only if owned by the user
+  // only update if owned by user making request
   const subscription = await Subscription.findOneAndUpdate(
     { _id: subscription_id, ownerId: userId },
     {
@@ -149,7 +142,7 @@ module.exports.update_subscription = async (event) => {
       intervalMinutes: body?.intervalMinutes,
       status: body?.status,
     },
-    { new: true } // Return the updated document
+    { new: true } // make sure latest doc returned
   );
 
   if (!subscription) {
@@ -172,16 +165,14 @@ module.exports.update_subscription = async (event) => {
   };
 };
 
-// DESTROY
+
 module.exports.delete_subscription = async (event) => {
-  // Extract user ID and subscription ID
+
   const userId = event.requestContext.authorizer.principalId;
   const subscription_id = event.pathParameters.subscription_id;
 
-  // Connect to the database
   await mongoose.connect();
 
-  // Delete subscription only if owned by the user
   const subscription = await Subscription.findOneAndDelete({
     _id: subscription_id,
     ownerId: userId,
@@ -209,39 +200,35 @@ module.exports.delete_subscription = async (event) => {
 
 
 module.exports.send_subscription_emails = async (event) => {
-  // connect to database
+
   await mongoose.connect()
 
-  // get all subscriptions that are due
+  // get the subscriptions ready for processing
   const now = new Date();
   const subscriptions = await Subscription.find({
     nextRunTime: { $lte: now },
     status: 'active'
   });
 
-  // Process the due subscriptions
+  // process subscriptions
   console.log('subscriptions to process:', subscriptions.length);
   for (const subscription of subscriptions) {
     await SubscriptionProcessor.process_subscription(subscription);
   }
 }
 
-
-
-
-// Unsubscribe from the subscription
 module.exports.unsubscribe = async (event) => {
     await mongoose.connect();
     try {
-        // Parse the token from the POST request body
+        
         const { token } = JSON.parse(event.body);
 
-        // Verify the token using the secret key
+        // verify token
         const decoded = jwt.verify(token, JWT_SECRET);
         console.log(decoded)
         const subscriptionId = decoded.sub;
 
-        // Update the subscription status to inactive
+        // set status to inactive
         const updatedSubscription = await Subscription.findByIdAndUpdate(subscriptionId, {
             status: 'inactive'
         }, { new: true });

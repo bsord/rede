@@ -8,6 +8,8 @@ import { useNavigate } from 'react-router-dom';
 import ContentPreview from './ContentPreview';
 import { templates, niches, intervals } from './data';
 import ReactGA from 'react-ga4';
+import { Select } from '../../../components/Elements/Select';
+import EmailInput from '../../auth/components/EmailInput';
 
 import { useAuthenticatedUser } from '../../auth';
 const CreateSubscriptionForm = () => {
@@ -21,13 +23,7 @@ const CreateSubscriptionForm = () => {
   const [selectedTemplate, setSelectedTemplate] = useState(templates[0]);
   const [contentPreview, setContentPreview] = useState();
   const [intervalMinutes, setIntervalMinutes] = useState(intervals[0].value); // Default to the first interval value in minutes
-
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    if (name === 'email') {
-      setEmail(value);
-    }
-  };
+    const [isEmailVerified, setIsEmailVerified] = useState(false);
 
   const handleNicheChange = (event) => {
     setNiche(event.target.value);
@@ -85,77 +81,92 @@ const CreateSubscriptionForm = () => {
     });
   };
 
+  const handleEmailChange = (emailValue) => {
+    setEmail(emailValue);
+  };
+
+  const handleEmailValidation = (isValid) => {
+    if(user){
+      setIsEmailVerified(true)
+    } else {
+      setIsEmailVerified(isValid);
+    }
+    
+  };
+
   useEffect(()=>{
     //handlePreview()
   },[niche, selectedTemplate])
   
 
   return (
-    <div>
-      Fill out the form to create a subscription
-      <form>
-        <div className="flex flex-col gap-2 my-4 text-left mx-4">
-          
-          
-          <Typography variant="h6">I would like</Typography>
-          <select
-            id="template"
-            name="template"
-            value={selectedTemplate?.name || ''}
-            onChange={handleTemplateChange}
-          >
-            {templates.map((template) => (
-              <option key={template.name} value={template.name}>
-                {template.name}
-              </option>
-            ))}
-          </select>
-          <Typography variant="h6">about</Typography>
-          <select id="niche" name="niche" value={niche} onChange={handleNicheChange}>
-            {niches.map((niche, index) => (
-              <option key={index} value={niche}>
-                {niche}
-              </option>
-            ))}
-          </select>
+    <div className='border border-gray-300 rounded-lg shadow-md bg-white grow'>
+      <div className='p-4'>
+        <form>
+          <div className="flex flex-col gap-2 text-left">
+            
+            
+            <Typography variant="h6">I would like</Typography>
+            <Select
+              id="template"
+              name="template"
+              value={selectedTemplate?.name || ''}
+              onChange={handleTemplateChange}
+              placeholder="I would like"
+              className={"font-semibold text-xl"}
+            >
+              {templates.map((template) => (
+                <option key={template.name} value={template.name}>
+                  {template.name}
+                </option>
+              ))}
+            </Select>
+            <Typography variant="h6">about</Typography>
+            <Select id="niche" name="niche" value={niche} onChange={handleNicheChange} className={"font-semibold text-xl"}>
+              {niches.map((niche, index) => (
+                <option key={index} value={niche}>
+                  {niche}
+                </option>
+              ))}
+            </Select>
 
-          <Typography variant="h6">every</Typography>
-          <select id="interval" name="interval" value={intervalMinutes} onChange={handleIntervalChange}>
-            {intervals.map((interval) => (
-              <option key={interval.value} value={interval.value}>
-                {interval.label}
-              </option>
-            ))}
-          </select>
+            <Typography variant="h6">every</Typography>
+            <Select id="interval" name="interval" value={intervalMinutes} onChange={handleIntervalChange} className={"font-semibold text-xl"}>
+              {intervals.map((interval) => (
+                <option key={interval.value} value={interval.value}>
+                  {interval.label}
+                </option>
+              ))}
+            </Select>
 
+            <Typography variant="h6">sent to</Typography>
+            <EmailInput
+              id="email"
+              label="email"
+              name="email"
+              autoComplete="email"
+              autoFocus
+              value={email}
+              onChange={handleEmailChange}
+              onValidation={handleEmailValidation}
+              enableValidation={!user}
+              placeholder="Email address"
+              disabled={user}
+              className={"font-semibold text-xl"}
+            />
+            <Button type="button" disabled={subscriptionIsPending || !email || !isEmailVerified} onClick={handleSubmit} className={""}>
+              Send it! {subscriptionIsPending && <FontAwesomeIcon icon={faSpinner} className="ml-2 animate-spin" />}
+            </Button>
+            {subscriptionIsPending && <LinearProgress />}
+            {subscriptionError && <span>There was an error</span>}
+            
+            {contentPreviewIsPending && <LinearProgress />}
+            {contentPreview && <><Typography variant="h5">Preview:</Typography>{contentPreview.subject}<ContentPreview htmlContent={contentPreview.content} /></>}
+            
+          </div>
           
-
-
-          
-          <Typography variant="h6">sent to</Typography>
-          <Input
-            id="email"
-            label="email"
-            name="email"
-            autoComplete="email"
-            autoFocus
-            value={email}
-            onChange={handleChange}
-            placeholder="Email address"
-            disabled={user}
-          />
-          <Button type="button" disabled={subscriptionIsPending || !email} onClick={handleSubmit}>
-            Send the emails! {subscriptionIsPending && <FontAwesomeIcon icon={faSpinner} className="ml-2 animate-spin" />}
-          </Button>
-          {subscriptionIsPending && <LinearProgress />}
-          {subscriptionError && <span>There was an error</span>}
-          
-          {contentPreviewIsPending && <LinearProgress />}
-          {contentPreview && <><Typography variant="h5">Preview:</Typography>{contentPreview.subject}<ContentPreview htmlContent={contentPreview.content} /></>}
-          
-        </div>
-        
-      </form>
+        </form>
+      </div>
     </div>
   );
 };

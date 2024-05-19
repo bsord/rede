@@ -10,24 +10,35 @@ const UserSchema = new Schema({
   email: {
     type: String,
     required: true,
-    unique: true,  // Ensure email is unique
+    unique: true,
   },
   password: {
     type: String,
-    select: false,  // Do not include by default in queries
+    select: false,
   },
   numericCode: {
     type: Number,
-    select: false,  // Do not include by default in queries
+    select: false,
   },
   numericCodeExpiry: {
     type: Date,
-    select: false,  // Do not include by default in queries
+    select: false,
   },
   codeSecret: {
     type: String,
-    select: false,  // Do not include by default in queries
+    select: false,
   },
+  settings: {
+    type: Object,
+    select: true,
+    default: {
+      emailNotifications: true,
+      darkMode: false,
+      pendingActions: [{
+        type: [Object],
+      }]
+    },
+  }
 });
 
 UserSchema.pre('save', async function (next) {

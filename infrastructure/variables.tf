@@ -38,3 +38,23 @@ variable "openai_api_key" {
     type        = string
     description = "OpenAI api key"
 }
+
+variable "reddit_client_id" {
+  type        = string
+  description = "Reddit App Client ID"
+}
+
+variable "reddit_secret_key" {
+  type        = string
+  description = "Reddit App Secret Key"
+}
+
+variable "reddit_username" {
+  type        = string
+  description = "Username for Reddit Developer Account"
+}
+
+variable "reddit_password" {
+  type        = string
+  description = "Password for Reddit Developer Account"
+}

@@ -3,8 +3,8 @@ import React from 'react'
 export const Typography = ({ variant, className, children, ...rest }) => {
   const variants = {
     h1: 'block antialiased tracking-normal font-sans text-5xl font-bold leading-tight',
-    h2: 'block antialiased tracking-tight font-sans text-4xl font-bold leading-[1.3]',
-    h3: 'block antialiased tracking-normal font-sans text-3xl font-semibold leading-snug',
+    h2: 'block antialiased tracking-tight font-sans text-3xl font-bold leading-tight md:text-4xl',
+    h3: 'block antialiased tracking-normal font-sans text-2xl font-semibold leading-snug  md:text-3xl',
     h4: 'block antialiased tracking-normal font-sans text-2xl font-semibold leading-snug',
     h5: 'block antialiased tracking-normal font-sans text-xl font-semibold leading-snug',
     h6: 'block antialiased tracking-normal font-sans text-sm font-medium leading-relaxed',
