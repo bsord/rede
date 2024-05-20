@@ -174,12 +174,12 @@ const AuthenticatedMenu = ({ user, navigate }) => {
 const NonAuthenticatedMenu = ({ navigate }) => (
   <>
     <div className="hidden md:flex items-center">
-      <button className="px-3 py-2 text-lg text-gray-200 bg-sky-500 hover:bg-sky-600 rounded-md font-semibold" onClick={() => navigate('/auth/magic')}>
+      <button className="px-3 py-2 text-lg text-white bg-sky-500 hover:bg-sky-600 rounded-md font-semibold" onClick={() => navigate('/auth/magic')}>
         SIGN IN
       </button>
     </div>
     <div className="md:hidden">
-      <button className="px-3 py-2 text-lg text-gray-200 bg-sky-500 hover:bg-sky-600 rounded-md font-semibold" onClick={() => navigate('/auth/magic')}>
+      <button className="px-3 py-2 text-lg text-white bg-sky-500 hover:bg-sky-600 rounded-md font-semibold" onClick={() => navigate('/auth/magic')}>
         SIGN IN
       </button>
     </div>
