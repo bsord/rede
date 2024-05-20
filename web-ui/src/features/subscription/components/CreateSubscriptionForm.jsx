@@ -10,20 +10,20 @@ import { templates, niches, intervals } from './data';
 import ReactGA from 'react-ga4';
 import { Select } from '../../../components/Elements/Select';
 import EmailInput from '../../auth/components/EmailInput';
-
 import { useAuthenticatedUser } from '../../auth';
+
 const CreateSubscriptionForm = () => {
-  const { data: user } = useAuthenticatedUser()
+  const { data: user } = useAuthenticatedUser();
   const navigate = useNavigate();
   const { mutate: createSubscription, isPending: subscriptionIsPending, error: subscriptionError } = useCreateSubscription();
   const { mutate: createAiContentPreview, isPending: contentPreviewIsPending, error: contentPreviewError } = useCreateAiContentPreview();
 
   const [email, setEmail] = useState(user?.email || '');
-  const [niche, setNiche] = useState(niches[0] || '');
+  const [niche, setNiche] = useState(niches[0].value || '');
   const [selectedTemplate, setSelectedTemplate] = useState(templates[0]);
   const [contentPreview, setContentPreview] = useState();
   const [intervalMinutes, setIntervalMinutes] = useState(intervals[0].value); // Default to the first interval value in minutes
-    const [isEmailVerified, setIsEmailVerified] = useState(false);
+  const [isEmailVerified, setIsEmailVerified] = useState(false);
 
   const handleNicheChange = (event) => {
     setNiche(event.target.value);
@@ -49,7 +49,7 @@ const CreateSubscriptionForm = () => {
       intervalMinutes, // Include the interval value in minutes
     };
 
-    if(user){
+    if (user) {
       ReactGA.event({
         category: "subscription",
         action: "create_subscription",
@@ -86,26 +86,22 @@ const CreateSubscriptionForm = () => {
   };
 
   const handleEmailValidation = (isValid) => {
-    if(user){
-      setIsEmailVerified(true)
+    if (user) {
+      setIsEmailVerified(true);
     } else {
       setIsEmailVerified(isValid);
     }
-    
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     //handlePreview()
-  },[niche, selectedTemplate])
-  
+  }, [niche, selectedTemplate]);
 
   return (
     <div className='border border-gray-300 rounded-lg shadow-md bg-white grow'>
       <div className='p-4'>
         <form>
           <div className="flex flex-col gap-2 text-left">
-            
-            
             <Typography variant="h6">I would like</Typography>
             <Select
               id="template"
@@ -123,13 +119,12 @@ const CreateSubscriptionForm = () => {
             </Select>
             <Typography variant="h6">about</Typography>
             <Select id="niche" name="niche" value={niche} onChange={handleNicheChange} className={"font-semibold text-xl"}>
-              {niches.map((niche, index) => (
-                <option key={index} value={niche}>
-                  {niche}
+              {niches.map((niche) => (
+                <option key={niche.value} value={niche.value}>
+                  {niche.name}
                 </option>
               ))}
             </Select>
-
             <Typography variant="h6">every</Typography>
             <Select id="interval" name="interval" value={intervalMinutes} onChange={handleIntervalChange} className={"font-semibold text-xl"}>
               {intervals.map((interval) => (
@@ -138,7 +133,6 @@ const CreateSubscriptionForm = () => {
                 </option>
               ))}
             </Select>
-
             <Typography variant="h6">sent to</Typography>
             <EmailInput
               id="email"
@@ -155,14 +149,11 @@ const CreateSubscriptionForm = () => {
               className={"font-semibold text-xl"}
             />
             <Button type="button" disabled={subscriptionIsPending || !email || !isEmailVerified} onClick={handleSubmit} className={""}>
-              {subscriptionIsPending? <>Creating subscription <FontAwesomeIcon icon={faSpinner} className="ml-2 animate-spin" /></>:<>Send It!</>}
+              {subscriptionIsPending ? <>Creating subscription <FontAwesomeIcon icon={faSpinner} className="ml-2 animate-spin" /></> : <>Send It!</>}
             </Button>
             {subscriptionError && <span>There was an error</span>}
-            
             {contentPreview && <><Typography variant="h5">Preview:</Typography>{contentPreview.subject}<ContentPreview htmlContent={contentPreview.content} /></>}
-            
           </div>
-          
         </form>
       </div>
     </div>

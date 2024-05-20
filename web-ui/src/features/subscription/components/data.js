@@ -79,29 +79,29 @@ export const templates = [
 ];
 
 export const niches = [
-    "fitness",
-    "politics",
-    "Health and Fitness",
-    "Personal Finance",
-    "Self-Improvement",
-    "Travel",
-    "Beauty and Fashion",
-    "Food and Recipes",
-    "Parenting",
-    "Home Decor",
-    "Tech Gadgets",
-    "Pets",
-    "Outdoor and Adventure",
-    "Mental Health",
-    "DIY Projects",
-    "Sustainable Living",
-    "Automotive",
-    "Gaming",
-    "Business and Entrepreneurship",
-    "Digital Marketing",
-    "Relationships",
-    "Spirituality and Mindfulness"
-  ]
+    { name: "Fitness", value: "fitness" },
+    { name: "Politics", value: "politics" },
+    { name: "Health and Fitness", value: "healthandfitness" },
+    { name: "Personal Finance", value: "personalfinance" },
+    { name: "Self-Improvement", value: "selfimprovement" },
+    { name: "Travel", value: "travel" },
+    { name: "Beauty and Fashion", value: "fashion" },
+    { name: "Food and Recipes", value: "food" },
+    { name: "Parenting", value: "parenting" },
+    { name: "Home Decor", value: "decor" },
+    { name: "Tech Gadgets", value: "tech" },
+    { name: "Pets", value: "pets" },
+    { name: "Outdoor and Adventure", value: "outdoors" },
+    { name: "Mental Health", value: "mentalhealth" },
+    { name: "DIY Projects", value: "diy" },
+    { name: "Sustainable Living", value: "sustainableliving" },
+    { name: "Automotive", value: "automotive" },
+    { name: "Gaming", value: "gaming" },
+    { name: "Business and Entrepreneurship", value: "entrepreneur" },
+    { name: "Digital Marketing", value: "digitalmarketing" },
+    { name: "Relationships", value: "relationships" },
+    { name: "Spirituality and Mindfulness", value: "mindfulness" }
+];
 
 export const intervals = [
     { label: 'Hour', value: 60 },
