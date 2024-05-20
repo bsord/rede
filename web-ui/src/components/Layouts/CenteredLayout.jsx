@@ -4,15 +4,11 @@ export const CenteredLayout = ({ children, title }) => {
   return (
     <>
       <Head title={title} />
-      <div className="h-dvh flex flex-col items-center bg-gray-100">
-        <Navbar />
-        <div className="flex flex-col w-full overflow-hidden justify-between flex-grow">
-          
-
-          <main className="flex-1 relative overflow-y-auto focus:outline-none">{children}</main>
-
-          
+      <div className="h-dvh flex flex-col items-center bg-gray-100 ">
+        <div className='fixed top-0 z-50 w-full h-16'>
+          <Navbar />
         </div>
+        <main className="w-full mx-auto mt-16">{children}</main>
       </div>
     </>
   )

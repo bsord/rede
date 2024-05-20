@@ -85,7 +85,7 @@ const AuthenticatedMenu = ({ user, navigate }) => {
           </NavLink>
 
 
-        <div className="border-l border-gray-500 mx-4 pl-4">
+        <div className="flex border-l border-gray-500 mx-4 pl-4">
           <NavLink
             to={'/account'}
             end
