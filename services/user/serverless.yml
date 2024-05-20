@@ -1,0 +1,95 @@
+service: users
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: us-east-1
+  environment:
+    MONGO_CONNECTION_STRING: ${ssm:/primary_db_connection_string}
+    OPENAI_API_KEY: ${ssm:/openai_api_key}
+    API_DOMAIN: "api.${ssm:/primary_domain_name}"
+    JWT_SECRET: 'rede-secret'
+
+plugins:
+  - serverless-domain-manager
+
+custom:
+  customDomain:
+    domainName: "api.${ssm:/primary_domain_name}"
+    certificateArn: ${ssm:/primary_domain_cert_arn}
+    basePath: "users"
+    endpointType: 'regional'
+    securityPolicy: tls_1_2
+    apiType: rest
+
+functions:
+
+  addUser:
+    timeout: 30
+    handler: index.add_user
+    logRetentionInDays: 30
+    events:
+      - http:
+          path: /
+          method: post
+          cors:
+            origin: '*'
+            headers: '*'
+
+  getUserById:
+    timeout: 30
+    handler: index.get_user_by_id
+    logRetentionInDays: 30
+    events:
+      - http:
+          path: /{user_id}
+          method: get
+          authorizer:
+            arn: arn:aws:lambda:us-east-1:654654171580:function:auth-dev-verify-token
+            resultTtlInSeconds: 0
+          request:
+            parameters:
+              paths:
+                user_id: true
+          cors:
+            origin: '*'
+            headers: '*'
+
+  updateUser:
+    timeout: 30
+    handler: index.update_user
+    logRetentionInDays: 30
+    events:
+      - http:
+          path: /{user_id}
+          method: post
+          authorizer:
+            arn: arn:aws:lambda:us-east-1:654654171580:function:auth-dev-verify-token
+            resultTtlInSeconds: 0
+          request:
+            parameters:
+              paths:
+                user_id: true
+          cors:
+            origin: '*'
+            headers: '*'
+
+  deleteUser:
+    timeout: 30
+    handler: index.delete_user
+    logRetentionInDays: 30
+    events:
+      - http:
+          path: /{user_id}
+          method: delete
+          authorizer:
+            arn: arn:aws:lambda:us-east-1:654654171580:function:auth-dev-verify-token
+            resultTtlInSeconds: 0
+          request:
+            parameters:
+              paths:
+                user_id: true
+          cors:
+            origin: '*'
+            headers: '*'
