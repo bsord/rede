@@ -98,7 +98,7 @@ const AuthenticatedMenu = ({ user, navigate }) => {
             }
           >
             <FontAwesomeIcon icon={faUser} className="mr-2" />
-            {getEmailPrefix(user.email)}
+            {user.name && user.name !== "" ? user.name :  getEmailPrefix(user.email)}
           </NavLink>
 
           <button className='ml-2 rounded-lg p-2 text-lg text-gray-700 hover:bg-gray-100' onClick={() => logout.mutate()}>

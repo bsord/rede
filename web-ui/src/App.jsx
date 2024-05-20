@@ -10,6 +10,8 @@ import ReactGA from 'react-ga4';
 import { Analytics } from './providers/Analytics'
 import { Unsubscribe } from './features/misc/routes/Unsubscribe';
 
+import {AccountRoutes} from './features/account'
+
 ReactGA.initialize('G-E4SFXQ77R7');
 
 const ProtectedRoute = ({ children }) => {
@@ -28,6 +30,17 @@ const router = createBrowserRouter([
       <Analytics>
         <ProtectedRoute>
           <SubscriptionRoutes />
+        </ProtectedRoute>
+      </Analytics>
+    ),
+    errorElement: <Error />,
+  },
+  {
+    path: '/account/*',
+    element: (
+      <Analytics>
+        <ProtectedRoute>
+          <AccountRoutes />
         </ProtectedRoute>
       </Analytics>
     ),
