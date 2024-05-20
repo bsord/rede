@@ -7,6 +7,8 @@ import { Button, LinearProgress } from '../../../components/Elements';
 import SubscriptionEvents from './SubscriptionEvents';
 import { intervals } from './data';
 import { Select } from '../../../components/Elements/Select';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 
 // Helper function to format dates nicely
 const formatDate = (dateString) => {
@@ -121,16 +123,15 @@ const ManageSubscription = ({ subscriptionId, onSubscriptionDeleted }) => {
         onClick={handleUpdate}
         disabled={isUpdating || updateSubscription.isLoading}
       >
-        {isUpdating || updateSubscription.isLoading ? 'Updating...' : 'Update'}
+        {isUpdating ? <>Updating <FontAwesomeIcon icon={faSpinner} className="ml-2 animate-spin" /></>:<>Update</>}
       </Button>
       <Button
         onClick={handleDelete}
         disabled={isDeletePending}
       >
-        {isDeletePending ? 'Deleting...' : 'Delete Subscription'}
+        {isDeletePending ? <>Deleting <FontAwesomeIcon icon={faSpinner} className="ml-2 animate-spin" /></>:<>Delete</>}
       </Button>
 
-      {(isUpdating || isDeletePending) && <LinearProgress />}
       {deleteError && <span className="text-red-600">Delete failed: {deleteError.message}</span>}
       {updateSubscription.isError && (
         <span className="text-red-600">Update failed: {updateSubscription.error.message}</span>

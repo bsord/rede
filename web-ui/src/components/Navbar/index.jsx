@@ -4,6 +4,7 @@ import logo from '../../assets/logo.svg';
 import { useState, useEffect, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRightFromBracket, faCog, faListUl, faPlus, faUser, faBars } from '@fortawesome/free-solid-svg-icons';
+import { NavLink } from 'react-router-dom';
 
 const AuthenticatedMenu = ({ user, navigate }) => {
   const [menuVisible, setMenuVisible] = useState(false);
@@ -54,71 +55,114 @@ const AuthenticatedMenu = ({ user, navigate }) => {
   return (
     <>
       <div className="hidden md:flex items-center space-x-4">
-        <button className="flex items-center px-4 py-3 text-lg text-gray-200 hover:bg-gray-800 rounded-md" onClick={() => navigate('/subscriptions/new')}>
-          <FontAwesomeIcon icon={faPlus} className="mr-2" /> Create
-        </button>
-        <button className="flex items-center px-4 py-3 text-lg text-gray-200 hover:bg-gray-800 rounded-md" onClick={() => navigate('/subscriptions')}>
-          <FontAwesomeIcon icon={faListUl} className="mr-2" /> Subscriptions
-        </button>
-        <div className="relative border-l border-gray-500 mx-4 pl-4">
-          <button
-            onMouseDown={toggleUserMenu}
-            className={`flex items-center px-6 py-3 text-lg text-gray-200 rounded-md hover:bg-gray-800 ${userMenuVisible ? 'bg-gray-800' : ''}`}
+
+          <NavLink
+            to={'/subscriptions/new'}
+            end
+            className={({ isActive, isPending, isTransitioning }) =>
+              "rounded-lg px-3 py-2 text-lg text-gray-200 hover:bg-gray-200 hover:text-gray-800".concat([
+                isPending ? "pending" : "",
+                isActive ? "border-b-2 border-sky-400" : "",
+                isTransitioning ? "transitioning" : "",
+              ].join(" "))
+            }
           >
+            <FontAwesomeIcon icon={faPlus} className="mr-2" /> Create
+          </NavLink>
+
+          <NavLink
+            to={'/subscriptions'}
+            end
+            className={({ isActive, isPending, isTransitioning }) =>
+              "rounded-lg px-3 py-2 text-lg text-gray-200 hover:bg-gray-200 hover:text-gray-800".concat([
+                isPending ? "pending" : "",
+                isActive ? "border-b-2 border-sky-400" : "",
+                isTransitioning ? "transitioning" : "",
+              ].join(" "))
+            }
+          >
+            <FontAwesomeIcon icon={faListUl} className="mr-2" /> Subscriptions
+          </NavLink>
+
+
+        <div className="border-l border-gray-500 mx-4 pl-4">
+          <NavLink
+            to={'/account'}
+            end
+            className={({ isActive, isPending, isTransitioning }) =>
+              "rounded-lg px-3 py-2 text-lg text-gray-200 hover:bg-gray-200 hover:text-gray-800".concat([
+                isPending ? "pending" : "",
+                isActive ? "border-b-2 border-sky-400" : "",
+                isTransitioning ? "transitioning" : "",
+              ].join(" "))
+            }
+          >
+            <FontAwesomeIcon icon={faUser} className="mr-2" />
             {getEmailPrefix(user.email)}
-            <FontAwesomeIcon icon={faUser} className="ml-2" />
+          </NavLink>
+
+          <button className='ml-2 rounded-lg p-2 text-lg text-gray-700 hover:bg-gray-100' onClick={() => logout.mutate()}>
+            <FontAwesomeIcon icon={faArrowRightFromBracket} className="text-red-800" />
           </button>
-          {userMenuVisible && (
-            <div ref={userMenuRef} className="absolute right-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50 w-max" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabIndex="-1">
-              <div className="py-1" role="none">
-                <div className="flex items-center px-4 py-2 min-w-0">
-                  <img className="h-10 w-10 rounded-full" src="https://via.placeholder.com/100" alt="User Avatar" />
-                  <div className="ml-3 flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-900">{getEmailPrefix(user.email)}</p>
-                    <p className="text-xs text-gray-500">{user.email}</p>
-                  </div>
-                </div>
-                <div className="border-t border-gray-100"></div>
-                <a href="#" className="flex items-center px-4 py-3 text-lg text-gray-700 hover:bg-gray-100 w-full" role="menuitem" tabIndex="-1">
-                  <FontAwesomeIcon icon={faCog} className="mr-2" /> Settings
-                </a>
-                <div className="border-t border-gray-100"></div>
-                <a href="#" className="flex items-center px-4 py-3 text-lg text-gray-700 hover:bg-gray-100 w-full" role="menuitem" tabIndex="-1" onClick={() => logout.mutate()}>
-                  <FontAwesomeIcon icon={faArrowRightFromBracket} className="mr-2 text-red-800" /> Logout
-                </a>
-              </div>
-            </div>
-          )}
         </div>
       </div>
       <div className="md:hidden">
-        <button ref={menuButtonRef} onClick={toggleMenu} className="cursor-pointer p-2">
-          <FontAwesomeIcon icon={faBars} className={`text-white w-6 h-6 transition-transform transform ${menuVisible ? 'rotate-90 text-blue-500' : 'rotate-0'}`} />
+        <button ref={menuButtonRef} onClick={toggleMenu} className="cursor-pointer flex items-center justify-center">
+          <FontAwesomeIcon icon={faBars} className={`h-7 transition-transform transform ${menuVisible ? 'rotate-90 text-sky-500' : 'text-white rotate-0'}`} />
         </button>
         {menuVisible && (
-          <div ref={menuRef} className="origin-top-right absolute right-0 w-full mt-4 rounded-b-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabIndex="-1">
-            <div className="py-1" role="none">
-              <a href="#" className="flex items-center px-4 py-3 text-lg text-gray-700 hover:bg-gray-100" role="menuitem" tabIndex="-1" onClick={() => navigate('/subscriptions/new')}>
+          <div ref={menuRef} className="origin-top-right absolute right-0 w-full mt-4 rounded-b-xl shadow-lg bg-gray-900 ring-1 ring-black ring-opacity-5 focus:outline-none z-50 p-4" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabIndex="-1">
+            <div className="py-1 text-gray-200 space-y-2" role="none">
+              <NavLink
+                to={'/subscriptions/new'}
+                end
+                className={({ isActive, isPending, isTransitioning }) =>
+                  "flex items-center px-4 py-3 text-lg text-gray-200 hover:bg-gray-200 hover:text-gray-800 rounded-lg".concat([
+                    isPending ? "pending" : "",
+                    isActive ? "border-b-2 border-sky-400" : "",
+                    isTransitioning ? "transitioning" : "",
+                  ].join(" "))
+                }
+              >
                 <FontAwesomeIcon icon={faPlus} className="mr-2" /> Create
-              </a>
-              <a href="#" className="flex items-center px-4 py-3 text-lg text-gray-700 hover:bg-gray-100" role="menuitem" tabIndex="-1" onClick={() => navigate('/subscriptions')}>
+              </NavLink>
+              <NavLink to={"/subscriptions"}
+               end
+                className={({ isActive, isPending, isTransitioning }) =>
+                  "flex items-center px-4 py-3 text-lg text-gray-200 hover:bg-gray-200 hover:text-gray-800 rounded-lg".concat([
+                    isPending ? "pending" : "",
+                    isActive ? "border-b-2 border-sky-400" : "",
+                    isTransitioning ? "transitioning" : "",
+                  ].join(" "))
+                }>
                 <FontAwesomeIcon icon={faListUl} className="mr-2" /> Subscriptions
-              </a>
-              <div className="flex items-center px-4 py-2 border-t border-gray-100">
-                <img className="h-10 w-10 rounded-full" src="https://via.placeholder.com/100" alt="User Avatar" />
-                <div className="ml-3">
-                  <p className="text-sm font-medium text-gray-900">{getEmailPrefix(user.email)}</p>
-                  <p className="text-xs text-gray-500">{user.email}</p>
+              </NavLink>
+
+              <div className="flex items-center justify-between pt-4 border-t border-gray-700 mt-4">
+                <NavLink
+                  to={'/account'}
+                  end
+                  className={({ isActive, isPending, isTransitioning }) =>
+                    "rounded-lg px-3 py-2 text-lg text-gray-200 hover:bg-gray-200 hover:text-gray-800".concat([
+                      isPending ? "pending" : "",
+                      isActive ? "border-b-2 border-sky-400" : "",
+                      isTransitioning ? "transitioning" : "",
+                    ].join(" "))
+                  }
+                >
+                <div className='flex'>
+                  <div className='h-10 w-10 rounded-full bg-sky-500 p-2 items-center justify-center flex'><FontAwesomeIcon icon={faUser} className="h-full" /></div>
+                  <div className="ml-3">
+                    <p className="text-sm font-medium ">{getEmailPrefix(user.email)}</p>
+                    <p className="text-xs text-gray-500">{user.email}</p>
+                  </div>
                 </div>
+                </NavLink>
+                <button onClick={() => logout.mutate()} className="flex items-center px-4 py-3 text-lg text-gray-200 hover:bg-gray-200 hover:text-gray-800 rounded-lg">
+                  <FontAwesomeIcon icon={faArrowRightFromBracket} className="text-red-800" />
+                </button>
               </div>
-              <div className='flex flex-row'>
-                <a href="#" className="flex items-center px-4 py-3 text-lg text-gray-700 hover:bg-gray-100" role="menuitem" tabIndex="-1">
-                  <FontAwesomeIcon icon={faCog} className="mr-2" /> Settings
-                </a>
-                <a href="#" className="flex items-center px-4 py-3 text-lg text-gray-700 hover:bg-gray-100" role="menuitem" tabIndex="-1" onClick={() => logout.mutate()}>
-                  <FontAwesomeIcon icon={faArrowRightFromBracket} className="mr-2 text-red-800" /> Logout
-                </a>
-              </div>
+
             </div>
           </div>
         )}
@@ -130,12 +174,12 @@ const AuthenticatedMenu = ({ user, navigate }) => {
 const NonAuthenticatedMenu = ({ navigate }) => (
   <>
     <div className="hidden md:flex items-center">
-      <button className="px-3 py-2 text-lg text-gray-200 bg-sky-500 hover:bg-sky-600 rounded-md font-bold" onClick={() => navigate('/auth/magic')}>
+      <button className="px-3 py-2 text-lg text-gray-200 bg-sky-500 hover:bg-sky-600 rounded-md font-semibold" onClick={() => navigate('/auth/magic')}>
         SIGN IN
       </button>
     </div>
     <div className="md:hidden">
-      <button className="px-3 py-2 text-lg text-gray-200 bg-sky-500 hover:bg-sky-600 rounded-md font-bold" onClick={() => navigate('/auth/magic')}>
+      <button className="px-3 py-2 text-lg text-gray-200 bg-sky-500 hover:bg-sky-600 rounded-md font-semibold" onClick={() => navigate('/auth/magic')}>
         SIGN IN
       </button>
     </div>

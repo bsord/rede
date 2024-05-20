@@ -42,9 +42,9 @@ const EmailInput = ({ value, onChange, onValidation, enableValidation = true, ..
   };
 
   return (
-    <div className="relative">
+    <div className="relative h-11">
       <Input
-      className="h-14"
+      className="h-11"
         {...rest}
         value={email}
         onChange={handleChange}
@@ -56,7 +56,7 @@ const EmailInput = ({ value, onChange, onValidation, enableValidation = true, ..
           }
         }}
       />
-      <div className="absolute inset-y-0 right-0 flex items-center pr-4 h-14">
+      <div className="absolute inset-y-0 right-0 flex items-center pr-4 h-11 py-6">
         {isValidating && (
           <FontAwesomeIcon icon={faSpinner} className="animate-spin text-sky-500 h-6" />
         )}
@@ -66,7 +66,7 @@ const EmailInput = ({ value, onChange, onValidation, enableValidation = true, ..
         {!isValidating && emailError && email.trim() !== '' && (
           <>
             <FontAwesomeIcon icon={faTimesCircle} className="text-red-500 h-6" />
-            <div className="absolute  text-red-500 text-right text-xs rounded pb-2 mt-2 w-64 right-0 bottom-14">
+            <div className="absolute  text-red-500 text-right text-xs rounded pb-2 mt-2 w-64 right-0 bottom-11">
               {emailError}
             </div>
           </>

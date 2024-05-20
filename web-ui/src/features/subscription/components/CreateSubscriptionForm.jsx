@@ -155,12 +155,10 @@ const CreateSubscriptionForm = () => {
               className={"font-semibold text-xl"}
             />
             <Button type="button" disabled={subscriptionIsPending || !email || !isEmailVerified} onClick={handleSubmit} className={""}>
-              Send it! {subscriptionIsPending && <FontAwesomeIcon icon={faSpinner} className="ml-2 animate-spin" />}
+              {subscriptionIsPending? <>Creating subscription <FontAwesomeIcon icon={faSpinner} className="ml-2 animate-spin" /></>:<>Send It!</>}
             </Button>
-            {subscriptionIsPending && <LinearProgress />}
             {subscriptionError && <span>There was an error</span>}
             
-            {contentPreviewIsPending && <LinearProgress />}
             {contentPreview && <><Typography variant="h5">Preview:</Typography>{contentPreview.subject}<ContentPreview htmlContent={contentPreview.content} /></>}
             
           </div>
