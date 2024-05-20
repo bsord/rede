@@ -8,7 +8,7 @@ export const CenteredLayout = ({ children, title }) => {
         <div className='fixed top-0 z-50 w-full h-16'>
           <Navbar />
         </div>
-        <main className="w-full mx-auto mt-16">{children}</main>
+        <main className="w-full mx-auto mt-16 h-full">{children}</main>
       </div>
     </>
   )
