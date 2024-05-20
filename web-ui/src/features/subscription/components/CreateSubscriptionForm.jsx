@@ -22,7 +22,7 @@ const CreateSubscriptionForm = () => {
   const [niche, setNiche] = useState(niches[0].value || '');
   const [selectedTemplate, setSelectedTemplate] = useState(templates[0]);
   const [contentPreview, setContentPreview] = useState();
-  const [intervalMinutes, setIntervalMinutes] = useState(intervals[0].value); // Default to the first interval value in minutes
+  const [intervalMinutes, setIntervalMinutes] = useState(intervals[1].value); // Default to the first interval value in minutes
   const [isEmailVerified, setIsEmailVerified] = useState(false);
 
   const handleNicheChange = (event) => {
