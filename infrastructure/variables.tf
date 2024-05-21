@@ -58,3 +58,8 @@ variable "reddit_password" {
   type        = string
   description = "Password for Reddit Developer Account"
 }
+
+variable "sendgrid_api_key" {
+  type        = string
+  description = "API Key for sendgrid"
+}

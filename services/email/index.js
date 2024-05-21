@@ -1,6 +1,8 @@
 const mongoose = require('./db');
-var aws = require('aws-sdk');
-var ses = new aws.SES({region: 'us-east-1'});
+
+const sgMail = require('@sendgrid/mail')
+sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+
 const EmailLog = require('./models/email_log');
 const validateEmail = require('./validation');
 
@@ -18,24 +20,20 @@ module.exports.send_email = async (event) => {
   // connect to database
   await mongoose.connect();
 
-  // define email based on body params
-  var params = {
-    Destination: {
-      ToAddresses: recipients,
-    },
-    Message: {
-      Body: {
-        Html: { Data: emailBody, Charset: 'UTF-8'},
-      },
-      Subject: { Data: subject, Charset: 'UTF-8'},
-    },
-    Source: fromAddress,
-  };
+  // send email
+  const msg = {
+    to: recipients, // Change to your recipient
+    from: fromAddress, // Change to your verified sender
+    subject: subject,
+    text: emailBody,
+    html: emailBody,
+  }
+  
 
   try {
-    // send email
-    const emailResponse = await ses.sendEmail(params).promise();
 
+    const emailResponse = await sgMail.send(msg)
+    
     // insert log of email into database
     const email_log = await EmailLog.create({
       success: true,
@@ -46,29 +44,35 @@ module.exports.send_email = async (event) => {
       emailBody: emailBody
     });
 
-    // return success with email details
+    console.log('Email sent')
+
     return {
       statusCode: 200,
       headers: headers,
       body: JSON.stringify(email_log),
     };
-  } catch (error) {
-    // insert log of email into database
-    const email_log = await EmailLog.create({
-      success: false,
-      detail: error,
-      recipients: recipients,
-      subject: subject,
-      fromAddress: fromAddress,
-      emailBody: emailBody
-    });
 
-    return {
-      statusCode: 500,
-      headers: headers,
-      body: JSON.stringify(email_log),
-    };
+  } catch (error) {
+      console.error(error)
+      // insert log of email into database
+      const email_log = await EmailLog.create({
+        success: false,
+        detail: error,
+        recipients: recipients,
+        subject: subject,
+        fromAddress: fromAddress,
+        emailBody: emailBody
+      });
+
+      return {
+        statusCode: 500,
+        headers: headers,
+        body: JSON.stringify(email_log),
+      };
   }
+  
+
+
 };
 
 module.exports.verify_email = async (event) => {

@@ -292,3 +292,46 @@ resource "aws_ssm_parameter" "reddit_password" {
   value       = var.reddit_password
   description = "Password for Reddit app developer account"
 }
+
+resource "cloudflare_record" "sendgrid_cname1" {
+  zone_id = var.cloudflare_zone_id
+  name = "url7481.rede.io"
+  type  = "CNAME"
+  value = "sendgrid.net"
+}
+
+resource "cloudflare_record" "sendgrid_cname2" {
+  zone_id = var.cloudflare_zone_id
+  name = "44423616.rede.io"
+  type  = "CNAME"
+  value = "sendgrid.net"
+}
+
+resource "cloudflare_record" "sendgrid_cname3" {
+  zone_id = var.cloudflare_zone_id
+  name = "em9141.rede.io"
+  type  = "CNAME"
+  value = "u44423616.wl117.sendgrid.net"
+}
+
+resource "cloudflare_record" "sendgrid_dkim1" {
+  zone_id = var.cloudflare_zone_id
+  name = "sgd._domainkey.rede.io"
+  type  = "CNAME"
+  value = "sgd.domainkey.u44423616.wl117.sendgrid.net"
+}
+
+resource "cloudflare_record" "sendgrid_dkim2" {
+  zone_id = var.cloudflare_zone_id
+  name = "sgd2._domainkey.rede.io"
+  type  = "CNAME"
+  value = "sgd2.domainkey.u44423616.wl117.sendgrid.net"
+}
+
+resource "aws_ssm_parameter" "sendgrid_api_key" {
+  name        = "sendgrid_api_key"
+  type        = "SecureString"
+  value       = var.sendgrid_api_key
+  description = "Sendgrid API key"
+}
+
