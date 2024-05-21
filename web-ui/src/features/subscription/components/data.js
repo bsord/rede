@@ -7,23 +7,58 @@ export const templates = [
                 <div style="padding: 20px; background-color: #f3f2ef; display: flex; align-items: center; justify-content: space-between;">
                     <div style="width: 50px; height: 50px; border-radius: 50%; background-color: #0073b1; margin-right: 15px;"></div>
                     <div style="flex-grow: 1;">
-                        <p style="color: #0073b1; font-size: 16px; margin: 0;">[poster_name]</p>
-                        <p style="color: #666; font-size: 14px; margin: 0;">[poster_title]</p>
-                        <p style="color: #999; font-size: 12px; margin: 0;">[post_date] • <span style="width: 12px; height: 12px; background-color: #999; display: inline-block; border-radius: 50%;"></span></p>
+                        <p style="color: #0073b1; font-size: 16px; margin: 0;">
+                            {{poster_name}} <!-- name of poster -->
+                        </p>
+                        <p style="color: #999; font-size: 12px; margin: 0;">
+                            {{post_date}} <!-- post date -->
+                            • <span style="width: 12px; height: 12px; background-color: #999; display: inline-block; border-radius: 50%;"></span>
+                        </p>
                     </div>
                 </div>
                 <div style="padding: 20px; background-color: #fff;">
-                    <p style="color: #333; font-size: 16px; line-height: 1.5;">[post_content]</p>
+                    <p style="color: #333; font-size: 16px; line-height: 1.5;">
+                        {{post_content
+                            
+                            <!-- guidelines:
+                            - Start with a Hook: Begin the post with a question, interesting fact, or bold statement to grab attention.
+                            - Break down the content to organize the information using p tags.
+                            - Include Lists: Lists use arrows, hyphens,•, or other unicode characters for markers. Lists use the 'br' html tag at the end of each item
+                            - Incorporate Quotes: Add relevant quotes from industry experts or notable figures.
+                            - Conclude with a clear CTA, encouraging readers to engage, comment, or share.
+                            - Font: Do not customize the font. All text should be the same style and 16px
+                            - Remember: You are an industry expert who gives industry insights on the given topic, not a sales person.
+                            - You never say, 'As an ...' when giving an opinion.
+                        }}
+                    </p>
                 </div>
-                <div style="padding: 0 20px; color: #0073b1; font-size: 14px; margin-bottom: 10px;">#[hashtag_1] #[hashtag_2] #[hashtag_3]</div>
+                <div style="padding: 0 20px; color: #0073b1; font-size: 14px; margin-bottom: 10px;">
+                    #{{hashtags}} <!-- hashtags -->
+                </div>
+                <div>
+                    {{embed_media
+                        <!-- embed an image using unsplash random url with query param with relevant terms -->
+                    }}
+                </div>
                 <div style="padding: 10px 20px; background-color: #f3f2ef; display: flex; justify-content: space-between; align-items: center;">
                     <div style="display: flex; align-items: center;">
-                        <span style="color: #666; font-size: 14px; margin-right: 10px; display: flex; align-items: center;"><div style="width: 14px; height: 14px; background-color: #666; margin-right: 5px; border-radius: 2px;"></div>[like_count]</span>
-                        <span style="color: #666; font-size: 14px; margin-right: 10px; display: flex; align-items: center;"><div style="width: 14px; height: 14px; background-color: #666; margin-right: 5px; border-radius: 2px;"></div>[comment_count]</span>
-                        <span style="color: #666; font-size: 14px; display: flex; align-items: center;"><div style="width: 14px; height: 14px; background-color: #666; margin-right: 5px; border-radius: 2px;"></div>[share_count]</span>
+                        <span style="color: #666; font-size: 14px; margin-right: 10px; display: flex; align-items: center;">
+                            <div style="width: 14px; height: 14px; background-color: #666; margin-right: 5px; border-radius: 2px;"></div>
+                            {{like_count}} <!-- like count -->
+                        </span>
+                        <span style="color: #666; font-size: 14px; margin-right: 10px; display: flex; align-items: center;">
+                            <div style="width: 14px; height: 14px; background-color: #666; margin-right: 5px; border-radius: 2px;"></div>
+                            {{comment_count}} <!-- comment count -->
+                        </span>
+                        <span style="color: #666; font-size: 14px; display: flex; align-items: center;">
+                            <div style="width: 14px; height: 14px; background-color: #666; margin-right: 5px; border-radius: 2px;"></div>
+                            {{share_count}} <!-- share count -->
+                        </span>
                     </div>
                     <div>
-                        <a href="[post_url]" style="color: #0073b1; text-decoration: none; font-size: 14px;">Read more on LinkedIn</a>
+                        <a href="{{post_url}}" style="color: #0073b1; text-decoration: none; font-size: 14px;">
+                            Read more on LinkedIn
+                        </a>
                     </div>
                 </div>
             </div>

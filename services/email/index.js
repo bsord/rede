@@ -28,11 +28,14 @@ module.exports.send_email = async (event) => {
     text: emailBody,
     html: emailBody,
   }
+
+  console.log(msg)
   
 
   try {
 
     const emailResponse = await sgMail.send(msg)
+    console.log(emailResponse)
     
     // insert log of email into database
     const email_log = await EmailLog.create({

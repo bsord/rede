@@ -21,9 +21,7 @@ module.exports.content_from_template = async (event) => {
   const supportingData = body?.supportingData || 'no supporting data'
 
   const html_input = `
-    
-
-    Niche:
+    Industry:
     ${niche}
 
     Context:
@@ -36,30 +34,28 @@ module.exports.content_from_template = async (event) => {
     ${template.content}
 
     Ask:
-    Using a scratch space, turn the provided context into a summary.
-    Then use the summary you came up with as context
-    From that concept come up with key ideas that would best fit the provided template.
-    Think creatively about how the key ideas can be used to generate the type of content desired in the template.
-    Write the content from the perspective of a soloprenuer who is an expert on the topic.
-    Using a hook early in the content is a great way to capture the readers attention.
-    Content should be cleverly written in such a way, that it encourages engagement without directly asking for it.
-    Then popuplate the provided html template with the best ideas.
-    it should not read like an advertisement or sales pitch, but like a story.
+    1. Using a scratch space, turn the provided context into a summary.
+    2. Use the summary as context to come up with key ideas that would best fit the provided template.
+    3. Think creatively about how the key ideas can be used to generate the type of content desired in the template.
+    4. Write the content from the perspective of a solopreneur who is an expert on the topic.
+    5. Use a hook early in the content to capture the reader's attention.
+    6. Ensure the content encourages engagement without directly asking for it.
+    7. Populate the provided HTML template with the best ideas.
 
-    placeholders can contain email compatible html formatted content
-
-    Really try and create the type of content being asked in the template.
-      Eg: do not include news headlines when the template expects tips
-
-    Do not include body or html wrapper elements.
-    
-  `
+    Guidelines:
+    - The content should not read like an advertisement or sales pitch, but like a story.
+    - Placeholders can contain email-compatible HTML formatted content.
+    - Output must only include the content for the <body> tag without the <body> tag itself.
+    - Do not include <html>, <head>, or <body> tags.
+    - Do not wrap the entire response in any other tags or characters.
+    - Emojis are never inside img tags. They are always inserted directly into the body of an html tag as raw unicode
+  `;
 
   const html_content_response = await openai.chat.completions.create({
     model: "gpt-4o",
     messages: [
       { role: "user", content: html_input },
-      { role: "system", content: "You are an API that generates html components based on a given template and niche using the context provided. Your output is limited to only the body of the html document. You do not include the body tag. You never return components higher than the <body></body> of an html document." }
+      { role: "system", content: "You are an API that generates HTML content based on a given template and niche using the context provided. Your output must only contain the HTML content that belongs within the <body> tag, without including the <body> tag itself. Do not include <html>, <head>, or <body> tags, and avoid wrapping the entire response in any other tags, characters, or unnecessary formatting. The content should follow the provided guidelines and focus on generating engaging, story-like content as described. Do not wrap responses in backticks" }
     ]
   });
 
