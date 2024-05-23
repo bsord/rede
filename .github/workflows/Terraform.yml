@@ -80,5 +80,5 @@ jobs:
       run: exit 1
 
     - name: Terraform Apply
-      if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/staging') 
+      if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || (github.event_name == 'push' && github.ref == 'refs/heads/staging') 
       run: terraform apply -auto-approve
