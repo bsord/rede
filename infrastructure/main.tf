@@ -13,6 +13,9 @@ resource "aws_acm_certificate" "primary_domain_cert" {
   }
 }
 
+data "cloudflare_zone" "primary_zone" {
+  zone_id = var.cloudflare_zone_id
+}
 
 
 resource "cloudflare_record" "primary_domain_cert_validation_records" {
@@ -26,7 +29,7 @@ resource "cloudflare_record" "primary_domain_cert_validation_records" {
   }
 
   zone_id         = each.value.zone_id
-  name            = trimsuffix(each.value.name, ".${var.primary_domain}.")
+  name            = trimsuffix(each.value.name, ".${data.cloudflare_zone.primary_zone.name}.")
   value           = each.value.record
   type            = each.value.type
   ttl             = 600
@@ -195,74 +198,11 @@ resource "aws_ssm_parameter" "openai_api_key" {
   description = "OpenAI api key"
 }
 
-
-resource "aws_ses_domain_identity" "primary_domain_ses_identity" {
-  domain = var.primary_domain
-}
-
-resource "aws_ses_domain_identity_verification" "primary_domain_ses_identity_verification" {
-  domain     = aws_ses_domain_identity.primary_domain_ses_identity.id
-  depends_on = [cloudflare_record.primary_domain_ses_domain_verification]
-}
-
-resource "aws_ses_domain_dkim" "primary_domain_ses_domain_dkim" {
-  domain = var.primary_domain
-}
-
-resource "cloudflare_record" "primary_domain_ses_domain_verification" {
-  zone_id = var.cloudflare_zone_id
-  name    = "_amazonses.${aws_ses_domain_identity.primary_domain_ses_identity.id}"
-  type    = "TXT"
-  value   = aws_ses_domain_identity.primary_domain_ses_identity.verification_token
-}
-
-resource "cloudflare_record" "dkim" {
-  zone_id = var.cloudflare_zone_id
-  count   = 3
-  name = format(
-    "%s._domainkey.%s",
-    element(aws_ses_domain_dkim.primary_domain_ses_domain_dkim.dkim_tokens, count.index),
-    var.primary_domain,
-  )
-  type  = "CNAME"
-  value = "${element(aws_ses_domain_dkim.primary_domain_ses_domain_dkim.dkim_tokens, count.index)}.dkim.amazonses.com"
-}
-
-resource "cloudflare_record" "spf" {
-  zone_id = var.cloudflare_zone_id
-  name    = var.primary_domain
-  type    = "TXT"
-  value   = "v=spf1 include:amazonses.com -all"
-}
-
-
 resource "cloudflare_record" "dmarc" {
   zone_id = var.cloudflare_zone_id
   name    = "_dmarc.${var.primary_domain}"
   type    = "TXT"
   value   = "v=DMARC1; p=reject;"
-}
-
-resource "cloudflare_record" "mail_from_mx" {
-  zone_id = var.cloudflare_zone_id
-  name    = "mail.${var.primary_domain}"
-  type    = "MX"
-  priority = "10"
-  value   = "feedback-smtp.us-east-1.amazonses.com"
-}
-
-resource "cloudflare_record" "mail_from_txt" {
-  zone_id = var.cloudflare_zone_id
-  name    = "mail.${var.primary_domain}"
-  type    = "TXT"
-  value   = "v=spf1 include:amazonses.com ~all"
-}
-
-resource "cloudflare_record" "bimi" {
-  zone_id = var.cloudflare_zone_id
-  name    = "default._bimi.${var.primary_domain}"
-  type    = "TXT"
-  value   = "v=BIMI1;l=https://rede.io/bimi.svg"
 }
 
 resource "aws_ssm_parameter" "reddit_client_id" {
@@ -293,39 +233,34 @@ resource "aws_ssm_parameter" "reddit_password" {
   description = "Password for Reddit app developer account"
 }
 
-resource "cloudflare_record" "sendgrid_cname1" {
-  zone_id = var.cloudflare_zone_id
-  name = "url7481.rede.io"
-  type  = "CNAME"
-  value = "sendgrid.net"
+resource "sendgrid_domain_authentication" "primary_domain" {
+    domain = var.primary_domain
+    is_default = false
+    automatic_security = false
+    custom_spf = null
 }
 
-resource "cloudflare_record" "sendgrid_cname2" {
+resource "cloudflare_record" "sendgrid_domain_validations" {
+  count   = 3
   zone_id = var.cloudflare_zone_id
-  name = "44423616.rede.io"
-  type  = "CNAME"
-  value = "sendgrid.net"
+  name    = sendgrid_domain_authentication.primary_domain.dns[count.index].host
+  value   = sendgrid_domain_authentication.primary_domain.dns[count.index].data
+  type    = upper(sendgrid_domain_authentication.primary_domain.dns[count.index].type)
+  priority = upper(sendgrid_domain_authentication.primary_domain.dns[count.index].type) != "MX" ? null : 5
 }
 
-resource "cloudflare_record" "sendgrid_cname3" {
-  zone_id = var.cloudflare_zone_id
-  name = "em9141.rede.io"
-  type  = "CNAME"
-  value = "u44423616.wl117.sendgrid.net"
+resource "sendgrid_link_branding" "primary_domain" {
+    domain = var.primary_domain
+    is_default = false
 }
 
-resource "cloudflare_record" "sendgrid_dkim1" {
+resource "cloudflare_record" "sendgrid_link_branding_validations" {
+  count   = 2
   zone_id = var.cloudflare_zone_id
-  name = "sgd._domainkey.rede.io"
-  type  = "CNAME"
-  value = "sgd.domainkey.u44423616.wl117.sendgrid.net"
-}
-
-resource "cloudflare_record" "sendgrid_dkim2" {
-  zone_id = var.cloudflare_zone_id
-  name = "sgd2._domainkey.rede.io"
-  type  = "CNAME"
-  value = "sgd2.domainkey.u44423616.wl117.sendgrid.net"
+  name    = sendgrid_link_branding.primary_domain.dns[count.index].host
+  value   = sendgrid_link_branding.primary_domain.dns[count.index].data
+  type    = upper(sendgrid_link_branding.primary_domain.dns[count.index].type)
+  priority = upper(sendgrid_link_branding.primary_domain.dns[count.index].type) != "MX" ? null : 5
 }
 
 resource "aws_ssm_parameter" "sendgrid_api_key" {

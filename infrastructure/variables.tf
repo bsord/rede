@@ -19,6 +19,12 @@ variable "mongodb_atlas_org_id" {
     description = "MongoDB Atlas Organization ID"
 }
 
+variable "mongodb_atlas_project_name" {
+  type        = string
+  description = "Project Name for mongodb"
+}
+
+
 variable "cloudflare_account_id" {
     type        = string
     description = "Cloudflare account ID"

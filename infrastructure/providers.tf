@@ -2,9 +2,6 @@
 terraform {
   cloud {
     organization = "Floydbase"
-    workspaces {
-      name = "gpt-4-inbox"
-    }
   }
   required_providers {
     aws = {
@@ -15,6 +12,9 @@ terraform {
     }
     cloudflare = {
       source = "cloudflare/cloudflare"
+    }
+    sendgrid = {
+      source = "Trois-Six/sendgrid"
     }
   }
   required_version = ">= 0.13"
@@ -37,4 +37,8 @@ provider "mongodbatlas" {
 
 provider "cloudflare" {
   api_token = var.cloudflare_api_token
+}
+
+provider "sendgrid" {
+    api_key = var.sendgrid_api_key
 }
