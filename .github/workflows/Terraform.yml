@@ -1,9 +1,10 @@
-name: 'Terraform'
+name: 'Terraform Apply'
 
 on:
   push:
     branches:
     - main
+    - staging
 
 jobs:
   terraform:
@@ -18,7 +19,7 @@ jobs:
 
     # Automatically selects the production Terraform workspace
     env:
-      TF_WORKSPACE: 'rede-prod'
+      TF_WORKSPACE: ${{ github.ref == 'refs/heads/main' && 'rede-prod' || 'rede-staging' }}
 
     steps:
     # Checkout the repository to the GitHub Actions runner
