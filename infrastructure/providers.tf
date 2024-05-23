@@ -40,5 +40,5 @@ provider "cloudflare" {
 }
 
 provider "sendgrid" {
-    api_key = var.sendgrid_api_key
+  api_key = var.sendgrid_api_key
 }
