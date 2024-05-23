@@ -6,6 +6,8 @@ on:
     - main
     - staging
   pull_request:
+    - main
+    - staging
 
 jobs:
   terraform:
@@ -16,7 +18,7 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: ./terraform
+        working-directory: ./infrastructure
 
     # Automatically selects the production Terraform workspace
     env:
