@@ -2,9 +2,9 @@
 # Primary database
 ###########################
 
-module "primary_db"{
-  source = "./modules/mongodb"
-  mongodb_atlas_org_id = var.mongodb_atlas_org_id
+module "primary_db" {
+  source                     = "./modules/mongodb"
+  mongodb_atlas_org_id       = var.mongodb_atlas_org_id
   mongodb_atlas_project_name = var.mongodb_atlas_project_name
 }
 
@@ -13,8 +13,8 @@ module "primary_db"{
 ###########################
 
 module "primary_domain_wildcard_certificate" {
-  source = "./modules/certificate"
-  domain = var.primary_domain
+  source             = "./modules/certificate"
+  domain             = var.primary_domain
   cloudflare_zone_id = var.cloudflare_zone_id
 }
 
@@ -23,9 +23,9 @@ module "primary_domain_wildcard_certificate" {
 ###########################
 
 module "backend" {
-  source = "./modules/backend"
-  domain = "api.${var.primary_domain}"
-  certificate_arn = module.primary_domain_wildcard_certificate.certificate_arn
+  source             = "./modules/backend"
+  domain             = "api.${var.primary_domain}"
+  certificate_arn    = module.primary_domain_wildcard_certificate.certificate_arn
   cloudflare_zone_id = var.cloudflare_zone_id
 }
 
@@ -34,9 +34,9 @@ module "backend" {
 ###########################
 
 module "frontend" {
-  source = "./modules/frontend"
-  primary_domain = var.primary_domain
-  certificate_arn = module.primary_domain_wildcard_certificate.certificate_arn
+  source             = "./modules/frontend"
+  primary_domain     = var.primary_domain
+  certificate_arn    = module.primary_domain_wildcard_certificate.certificate_arn
   cloudflare_zone_id = var.cloudflare_zone_id
 }
 
@@ -46,8 +46,8 @@ module "frontend" {
 ###########################
 
 module "mail" {
-  source = "./modules/mail"
-  domain = var.primary_domain
+  source             = "./modules/mail"
+  domain             = var.primary_domain
   cloudflare_zone_id = var.cloudflare_zone_id
 }
 
@@ -56,16 +56,16 @@ module "mail" {
 ###########################
 
 resource "aws_ssm_parameter" "primary_domain_cdn" {
-  name = "primary_domain_cdn"
-  type = "String"
-  value = module.frontend.cdn_bucket_id
+  name        = "primary_domain_cdn"
+  type        = "String"
+  value       = module.frontend.cdn_bucket_id
   description = "Bucket ID of primary domain CDN"
 }
 
 resource "aws_ssm_parameter" "primary_domain_cdn_distribution" {
-  name = "primary_domain_cdn_distribution"
-  type = "String"
-  value = module.frontend.cloudfront_distribution_id
+  name        = "primary_domain_cdn_distribution"
+  type        = "String"
+  value       = module.frontend.cloudfront_distribution_id
   description = "Distribution ID for primary CDN CloudFront distribution"
 }
 
@@ -119,22 +119,22 @@ resource "aws_ssm_parameter" "sendgrid_api_key" {
 }
 
 resource "aws_ssm_parameter" "primary_db_connection_string" {
-  name = "primary_db_connection_string"
-  type = "SecureString"
-  value = module.primary_db.db_connection_string
+  name        = "primary_db_connection_string"
+  type        = "SecureString"
+  value       = module.primary_db.db_connection_string
   description = "Connection String for primary mongo db"
 }
 
 resource "aws_ssm_parameter" "primary_domain_name" {
-  name = "primary_domain_name"
-  type = "String"
-  value = var.primary_domain
+  name        = "primary_domain_name"
+  type        = "String"
+  value       = var.primary_domain
   description = "DNS name of primary domain"
 }
 
 resource "aws_ssm_parameter" "primary_domain_cert_arn" {
-  name = "primary_domain_cert_arn"
-  type = "String"
-  value = module.primary_domain_wildcard_certificate.certificate_arn
+  name        = "primary_domain_cert_arn"
+  type        = "String"
+  value       = module.primary_domain_wildcard_certificate.certificate_arn
   description = "Certificate ARN for primary domain"
 }
