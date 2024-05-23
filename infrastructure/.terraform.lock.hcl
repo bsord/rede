@@ -85,28 +85,6 @@ provider "registry.terraform.io/mongodb/mongodbatlas" {
   ]
 }
 
-provider "registry.terraform.io/taharah/sendgrid" {
-  version = "0.2.0"
-  hashes = [
-    "h1:1ds8ho4ph4mXLsGTWzHOj01jMzpPjU+6lCQbCqcZLr0=",
-    "zh:2e555f817119a1621a83f451646f34a68a46a9e4ca91048b41d80d3bbd9af35e",
-    "zh:333504cca86c36dec63a0f73e53835e7b9bd0b1a75133c53bb3532d0d991cd4b",
-    "zh:44481ce099292fd34795c9d0b99374a05c96672fefae2e84492dd1fa5cf30603",
-    "zh:57eb5f65a150d01d04f3a77621c1c2dfbdfb244352ec577b1a17592e63d7ea13",
-    "zh:5cbb846726ce9d63c6053866b04ec23ed7b0e924109ed49db232b85dcc69f7fd",
-    "zh:7556f2396f3fb3f55731f358b216ad40c551c55d0df7dcf2823e0776b27b0615",
-    "zh:832ad6cba264100106e4aa330f168988506dff3deeb81577b4fdfe6ecbff0b9e",
-    "zh:9e1c20670af83f5ebe558f13feefa11d379cdc050a520f2a47b37d07280f8290",
-    "zh:c0a405fc9b21c955958fc04b40eae16749b5cbaf1ee2cb8003ed0adcd0d2266c",
-    "zh:c6d541e4cb4eb5203770f52d297a646bb8a0f65331468e6d2bdd8f7132617fe2",
-    "zh:cddcac5d682444f5a217b5189e4258160d3c5d3bb10916899e2368f511eb6918",
-    "zh:da70ce935440fa8bbb360e5712bc186343a1eeb73062924223eee08c418cf232",
-    "zh:ebbf3b8221b54e7ab9b99ad71b06d1a8bb778373bad51ee05a1f46154dbb3227",
-    "zh:f85ede9fc839922be5c84586d60f2e56011e6b22a1ed5f2755b1632ec49d76aa",
-    "zh:fbd1fee2c9df3aa19cf8851ce134dea6e45ea01cb85695c1726670c285797e25",
-  ]
-}
-
 provider "registry.terraform.io/trois-six/sendgrid" {
   version = "0.2.1"
   hashes = [
