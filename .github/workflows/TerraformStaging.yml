@@ -41,6 +41,7 @@ jobs:
       id: fmt
       run: terraform fmt -check
 
+    # Generates an execution plan for Terraform
     - name: Terraform Plan
       id: plan
       if: github.event_name == 'pull_request'
