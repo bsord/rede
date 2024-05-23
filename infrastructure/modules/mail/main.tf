@@ -1,6 +1,5 @@
 resource "sendgrid_domain_authentication" "domain_authentication" {
     domain = var.domain
-    is_default = false
     automatic_security = false
     custom_spf = null
 }
@@ -16,7 +15,6 @@ resource "cloudflare_record" "sendgrid_domain_validations" {
 
 resource "sendgrid_link_branding" "domain_link_branding" {
     domain = var.domain
-    is_default = false
 }
 
 resource "cloudflare_record" "sendgrid_link_branding_validations" {

@@ -1,9 +1,10 @@
-name: 'Terraform'
+name: 'Terraform Staging'
 
 on:
   push:
     branches:
-    - main
+    - staging
+  pull_request:
 
 jobs:
   terraform:
@@ -18,7 +19,7 @@ jobs:
 
     # Automatically selects the production Terraform workspace
     env:
-      TF_WORKSPACE: 'rede-prod'
+      TF_WORKSPACE: rede-staging
 
     steps:
     # Checkout the repository to the GitHub Actions runner
@@ -51,7 +52,7 @@ jobs:
     
     - name: Update Pull Request
       uses: actions/github-script@0.9.0
-      if: github.event_name == 'pull_request'
+      if: github.event_name == 'pull_request' && steps.plan.outcome == 'failure'
       env:
         PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
       with:
@@ -75,5 +76,5 @@ jobs:
       run: exit 1
 
     - name: Terraform Apply
-      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      if: github.ref == 'refs/heads/staging' && github.event_name == 'push'
       run: terraform apply -auto-approve
