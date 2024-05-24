@@ -10,7 +10,7 @@ provider:
     OPENAI_API_KEY: ${ssm:/openai_api_key}
     API_DOMAIN: "api.${ssm:/primary_domain_name}"
     JWT_SECRET: 'rede-secret'
-    SENDING_DOMAIN: ${ssm:/primary_domain_name}
+    DOMAIN: ${ssm:/primary_domain_name}
 
 plugins:
   - serverless-domain-manager

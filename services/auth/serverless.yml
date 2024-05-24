@@ -9,6 +9,7 @@ provider:
     MONGO_CONNECTION_STRING: ${ssm:/primary_db_connection_string}
     JWT_SECRET: 'rede-secret'
     API_DOMAIN: "api.${ssm:/primary_domain_name}"
+    DOMAIN: ${ssm:/primary_domain_name}
 
 plugins:
   - serverless-domain-manager
