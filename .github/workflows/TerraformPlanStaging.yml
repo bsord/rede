@@ -75,7 +75,6 @@ jobs:
 
   webapp:
     name: 'Web App'
-    needs: services
     runs-on: ubuntu-latest
 
     # Required for Github-AWS OIDC to work
