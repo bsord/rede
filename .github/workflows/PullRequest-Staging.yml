@@ -1,12 +1,12 @@
-name: 'Terraform Apply - Prod'
+name: 'Pull Request - Staging'
 
 on:
-  push:
+  pull_request:
     branches:
-    - main
+    - staging
 
 jobs:
-  terraform:
+  infrastructure:
     name: 'Terraform'
     runs-on: ubuntu-latest
 
@@ -18,7 +18,7 @@ jobs:
 
     # Automatically selects the production Terraform workspace
     env:
-      TF_WORKSPACE: 'rede-prod'
+      TF_WORKSPACE: 'rede-staging'
 
     steps:
     # Checkout the repository to the GitHub Actions runner
@@ -50,7 +50,7 @@ jobs:
     
     - name: Update Pull Request
       uses: actions/github-script@0.9.0
-      if: github.event_name == 'pull_request'
+      if: github.event_name == 'pull_request' && steps.plan.outcome == 'failure'
       env:
         PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
       with:
@@ -73,11 +73,69 @@ jobs:
       if: steps.plan.outcome == 'failure'
       run: exit 1
 
-    - name: Terraform Apply
-      run: terraform apply -auto-approve
+  services:
+    name: 'Serverless'
+    needs: infrastructure
+    runs-on: ubuntu-latest
+
+    # Required for Github-AWS OIDC to work
+    permissions:
+      id-token: write
+      contents: read
+
+    # Checkout the repository to the GitHub Actions runner
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    # Configure AWS Credentials
+    # Basically run 'aws configure' as you would from local CLI
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-region: us-east-1
+        role-to-assume: arn:aws:iam::654654171580:role/GithubActionsDeploymentRole
+        role-duration-seconds: 1200 # Optional duration, 20 minutes in this case
+
+    # Install Nodejs
+    - name: Use Node.js 20.x
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20.x
+
+    # Deploy Subscription Service
+    - run: npm ci
+      name: "Subscription Service - Install dependencies"
+      working-directory: 'services/subscription'
+
+    # Deploy AI Service
+    - run: npm ci
+      name: "AI Service - Install dependencies"
+      working-directory: 'services/ai'
+
+    # Deploy Auth Service
+    - run: npm ci
+      name: "Auth Service - Install dependencies"
+      working-directory: 'services/auth'
+
+    # Deploy Email Service
+    - run: npm ci
+      name: "Email Service - Install dependencies"
+      working-directory: 'services/email'
+    
+    # Deploy Fetch Service
+    - run: npm ci
+      name: "Fetch Service - Install dependencies"
+      working-directory: 'services/fetch'
+
+    # Deploy User Service
+    - run: npm ci
+      name: "User Service - Install dependencies"
+      working-directory: 'services/user'
 
   webapp:
     name: 'Web App'
+    needs: services
     runs-on: ubuntu-latest
 
     # Required for Github-AWS OIDC to work
@@ -101,7 +159,7 @@ jobs:
       uses: aws-actions/configure-aws-credentials@v4
       with:
         aws-region: us-east-1
-        role-to-assume: arn:aws:iam::654654171580:role/GithubActionsDeploymentRole
+        role-to-assume: arn:aws:iam::905418409336:role/GithubActionsDeploymentRole
         role-duration-seconds: 1200 # Optional duration, 20 minutes in this case
 
     # Install Nodejs
@@ -115,6 +173,3 @@ jobs:
 
     - run: npm run build
       name: "Build"
-
-    - run: npm run deploy
-      name: "Deploy"
