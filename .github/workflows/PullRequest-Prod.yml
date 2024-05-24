@@ -94,7 +94,7 @@ jobs:
       uses: aws-actions/configure-aws-credentials@v4
       with:
         aws-region: us-east-1
-        role-to-assume: arn:aws:iam::633025216388:role/GithubActions-Fairbanksio-F5oclock
+        role-to-assume: arn:aws:iam::654654171580:role/GithubActionsDeploymentRole
         role-duration-seconds: 1200 # Optional duration, 20 minutes in this case
 
     # Install Nodejs
