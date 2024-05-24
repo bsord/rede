@@ -79,7 +79,7 @@ module.exports.process_subscription = async (subscription) => {
             emailBody,
             recipients: [email],
             subject: emailSubject,
-            fromAddress: 'Friends at Rede <yourfriends@rede.io>',
+            fromAddress: `Friends at Rede <yourfriends@${process.env.SENDING_DOMAIN}>`,
         };
 
         // Send the email using the email API
