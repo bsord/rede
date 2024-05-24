@@ -224,7 +224,7 @@ module.exports.requestMagicLink = async (event, context) => {
     user.numericCodeExpiry = new Date(Date.now() + 300000);  // Numeric code expires in 5 minutes
     await user.save();
 
-    const magicLink = `https://rede.io/auth/magic?token=${token}`;
+    const magicLink = `https://${process.env.DOMAIN}/auth/magic?token=${token}`;
     const emailData = {
       emailBody: `
         <div style="font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'; color: #333; background-color: #f5f5f5; padding: 20px; text-align: center;">
@@ -240,7 +240,7 @@ module.exports.requestMagicLink = async (event, context) => {
       `,  // Do not include codeSecret in the email
       recipients: [email],
       subject: 'Your Login Code',
-      fromAddress: 'Rede <yoursubscription@rede.io>',
+      fromAddress: `Rede <noreply@${process.env.DOMAIN}>`,
     };
 
     await axios.post(`https://${process.env.API_DOMAIN}/email/send`, emailData);

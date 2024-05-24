@@ -21,6 +21,7 @@ custom:
     endpointType: 'regional'
     securityPolicy: tls_1_2
     apiType: rest
+  authorizerARN: "arn:aws:lambda:${aws:region}:${aws:accountId}:function:auth-${sls:stage}-verify-token"
 
 functions:
 

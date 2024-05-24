@@ -56,7 +56,7 @@ module.exports.process_subscription = async (subscription) => {
         let emailSubject = contentResponse.data.subject;
 
         // create unsubscribe link
-        const unsubscribeLink = `https://rede.io/unsubscribe?token=${unsubscribeToken}`;
+        const unsubscribeLink = `https://${process.env.DOMAIN}/unsubscribe?token=${unsubscribeToken}`;
 
         // add footer html to all messages
         emailBody = `
@@ -79,7 +79,7 @@ module.exports.process_subscription = async (subscription) => {
             emailBody,
             recipients: [email],
             subject: emailSubject,
-            fromAddress: 'Friends at Rede <yourfriends@rede.io>',
+            fromAddress: `Friends at Rede <yourfriends@${process.env.DOMAIN}>`,
         };
 
         // Send the email using the email API
