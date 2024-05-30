@@ -1,4 +1,3 @@
-const mongoose = require('./db')
 const { OpenAI } = require('openai');
 const openai = new OpenAI()
 
@@ -9,11 +8,9 @@ const headers = {
 
 // CREATE
 module.exports.content_from_template = async (event) => {
+  console.log(event)
   // get event body
   var body = JSON.parse(event.body)
-
-  // connect to database
-  await mongoose.connect()
 
   // insert subscription to database
   const niche = body?.niche || 'testing'
@@ -85,6 +82,42 @@ module.exports.content_from_template = async (event) => {
       message: 'Generated preview',
       content: content,
       subject: subject
+    }),
+  }
+}
+
+// CREATE
+module.exports.summarize = async (event) => {
+  // get event body
+  var body = JSON.parse(event.body)
+
+  // insert subscription to database
+  const text = body?.text || 'testing'
+
+  const user_prompt = `
+    Text:
+    ${text}
+
+    Ask:
+    Summarize the text content of the webpage and identify the key takeaways
+  `;
+
+  const html_content_response = await openai.chat.completions.create({
+    model: "gpt-3.5-turbo",
+    messages: [
+      { role: "user", content: user_prompt },
+      { role: "system", content: "You are an API that summarizes content from webpages and makes a list of key takeaways" }
+    ]
+  });
+
+  const content = html_content_response.choices[0].message.content
+
+  return {
+    statusCode: 200,
+    headers: headers,
+    body: JSON.stringify({
+      message: 'Generated summary',
+      summary: content
     }),
   }
 }

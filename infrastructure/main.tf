@@ -52,6 +52,53 @@ module "mail" {
 }
 
 ###########################
+# Message Queues
+###########################
+
+locals {
+    queues = {
+        subscription-processing = {
+            name = "subscription-processing"
+            ssm_path = "queue/subscription-processing"
+
+            delay_seconds = 0
+            fifo_queue = false
+            max_message_size = 262144
+            max_receive_count = 3
+            message_retention_seconds = 345600
+            receive_wait_time_seconds = 0
+            visibility_timeout_seconds = 30
+        }
+    }
+}
+
+resource "aws_sqs_queue" "deadletter_queue" {
+    name = "deadletter-queue"
+    delay_seconds = 0
+    max_message_size = 262144
+    message_retention_seconds = 345600
+    receive_wait_time_seconds = 0
+}
+
+
+module "queues" {
+    for_each = local.queues
+    source = "./modules/queues"
+    deadletter_arn = aws_sqs_queue.deadletter_queue.arn
+
+    queue_name = each.value.name
+    ssm_path = each.value.ssm_path
+
+    delay_seconds = each.value.delay_seconds
+    fifo_queue = each.value.fifo_queue
+    max_message_size = each.value.max_message_size
+    max_receive_count = each.value.max_receive_count
+    message_retention_seconds = each.value.message_retention_seconds
+    receive_wait_time_seconds = each.value.receive_wait_time_seconds
+    visibility_timeout_seconds = each.value.visibility_timeout_seconds
+}
+
+###########################
 # Parameters
 ###########################
 

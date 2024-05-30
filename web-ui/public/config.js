@@ -1,1 +1,1 @@
-window.REACT_APP_API_DOMAIN="api.rede.io"
+window.REACT_APP_API_DOMAIN="api.staging.rede.io"

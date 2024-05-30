@@ -36,3 +36,14 @@ functions:
           cors: 
             origin: '*'
             headers: '*'
+  summarize:
+    timeout: 30
+    handler: index.summarize
+    logRetentionInDays: 30
+    events:
+      - http:
+          path: /summarize
+          method: post
+          cors: 
+            origin: '*'
+            headers: '*'

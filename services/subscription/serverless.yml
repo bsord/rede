@@ -11,6 +11,12 @@ provider:
     API_DOMAIN: "api.${ssm:/primary_domain_name}"
     JWT_SECRET: 'rede-secret'
     DOMAIN: ${ssm:/primary_domain_name}
+    SUBSCRIPTION_PROCESSING_QUEUE_URL: ${ssm:/queue/subscription-processing/url}
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - sqs:*
+      Resource: "*"
 
 plugins:
   - serverless-domain-manager
@@ -154,4 +160,16 @@ functions:
       - schedule:
           rate: rate(5 minutes)
           enabled: true
+
+  processSubscriptionEmails:
+    timeout: 900
+    memorySize: 256
+    handler: index.subscription_processor
+    logRetentionInDays: 7
+    events:
+      - sqs:
+          arn: ${ssm:/queue/subscription-processing/arn}
+          batchSize: 2
+          maximumConcurrency: 5
+          maximumBatchingWindow: 10
   
