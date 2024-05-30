@@ -4,6 +4,23 @@ const SubscriptionEvent = require('./models/subscription_event')
 const SubscriptionProcessor = require("./subscriptionProcessor");
 const jwt = require('jsonwebtoken')
 
+const { SQSClient, SendMessageCommand } = require("@aws-sdk/client-sqs");
+const sqsClient = new SQSClient({ region: 'us-east-1' });
+const sendMessageToSQS = async (queueUrl, event, type) => {
+    const params = {
+        QueueUrl: queueUrl,
+        MessageAttributes: {
+            "type": {
+                DataType: 'String',
+                StringValue: type
+            }
+        },
+        MessageBody: JSON.stringify(event)
+    };
+    const command = new SendMessageCommand(params);
+    return sqsClient.send(command);
+};
+
 const headers = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Credentials': true,
@@ -32,8 +49,16 @@ module.exports.add_subscription = async (event) => {
     ownerId: userId 
   });
 
-  // Send the first email
-  await SubscriptionProcessor.process_subscription(subscription);
+  const sqs_response = await sendMessageToSQS(process.env.SUBSCRIPTION_PROCESSING_QUEUE_URL, subscription, 'subscription');
+  console.log(sqs_response);
+  //await SubscriptionProcessor.process_subscription(subscription);
+
+  await SubscriptionEvent.create({
+    subscriptionId: subscription._id,
+    type: 'create',
+    detail: subscription,
+    status: 'success',
+  });
 
   return {
     statusCode: 200,
@@ -213,7 +238,26 @@ module.exports.send_subscription_emails = async (event) => {
   // process subscriptions
   console.log('subscriptions to process:', subscriptions.length);
   for (const subscription of subscriptions) {
-    await SubscriptionProcessor.process_subscription(subscription);
+    const sqs_response = await sendMessageToSQS(process.env.SUBSCRIPTION_PROCESSING_QUEUE_URL, subscription, 'subscription');
+    console.log(sqs_response);
+    //await SubscriptionProcessor.process_subscription(subscription);
+  }
+}
+
+module.exports.subscription_processor = async (event) => {
+
+  await mongoose.connect()
+
+  const records = event.Records;
+  if (records && records.length > 0) {
+    for (const record of records) {
+      if (record.body) {
+        // get event details
+        const subscription = JSON.parse(record.body);
+        console.log(subscription);
+        await SubscriptionProcessor.process_subscription(subscription);
+      }
+    }
   }
 }
 

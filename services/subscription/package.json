@@ -12,6 +12,7 @@
     "serverless-domain-manager": "^7.1.2"
   },
   "dependencies": {
+    "@aws-sdk/client-sqs": "^3.583.0",
     "axios": "^1.6.8",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^7.6.3"

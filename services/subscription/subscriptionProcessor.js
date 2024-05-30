@@ -30,17 +30,43 @@ module.exports.process_subscription = async (subscription) => {
         );
 
         const dataUrl = `https://${API_DOMAIN}/fetch/reddit/posts`;
+        const searchResultSummaryUrl = `https://${API_DOMAIN}/fetch/search/result`;
         const contentUrl = `https://${API_DOMAIN}/ai/content-from-template`;
         const emailUrl = `https://${API_DOMAIN}/email/send`;
 
-        // fetch useful data
+        // Fetch useful data
         const dataResponse = await axios.post(dataUrl, {
             subreddit: niche
         });
-        console.log(dataResponse)
-        const stringifiedData = JSON.stringify(dataResponse.data)
 
-        // get email content body made from template + ai generated content
+        let posts = [];
+        for(const redditPost of dataResponse.data) {
+            if (posts.length >= 5) {
+                break; // Limit to 5 posts
+            }
+
+            try {
+                const searchResponse = await axios.post(searchResultSummaryUrl, {
+                    query: redditPost.title
+                });
+
+                if (searchResponse.status === 200) {
+                    redditPost.summary = searchResponse.data.summary;
+                    posts.push(redditPost);
+                } else {
+                    const errorMessage = searchResponse.data.message || `Non-200 status: ${searchResponse.status}`;
+                    console.log(`Skipping post: ${errorMessage}`);
+                }
+            } catch (error) {
+                const errorMessage = error.response?.data?.message || error.message;
+                console.log('Error fetching search result summary:', errorMessage);
+            }
+        }
+
+        console.log('posts', posts);
+        const stringifiedData = JSON.stringify(posts);
+
+        // Get email content body made from template + AI generated content
         const contentResponse = await axios.post(contentUrl, {
             template: template,
             niche,
@@ -48,21 +74,22 @@ module.exports.process_subscription = async (subscription) => {
         });
 
         if (contentResponse.status !== 200) {
-            throw new Error(`Failed to get content from template: ${contentResponse.statusText}`);
+            const errorMessage = contentResponse.data.message || `Failed to get content from template: ${contentResponse.statusText}`;
+            throw new Error(errorMessage);
         }
 
-        // define email params
+        // Define email params
         let emailBody = contentResponse.data.content;
         let emailSubject = contentResponse.data.subject;
 
-        // create unsubscribe link
+        // Create unsubscribe link
         const unsubscribeLink = `https://${process.env.DOMAIN}/unsubscribe?token=${unsubscribeToken}`;
 
-        // add footer html to all messages
+        // Add footer HTML to all messages
         emailBody = `
             <div>
                 ${emailBody}
-                <table width="100%" cellpadding="0" cellspacing="0" style="max-width: 600px; margin: auto; font-family: Arial, sans-serif; background-color: #f4f4f4; color: #666;">
+                <table width="100%" cellpadding="0" cellspacing="0" style="margin: 10px 0px; max-width: 600px; margin: auto; font-family: Arial, sans-serif; background-color: #f4f4f4; color: #666;">
                     <tr>
                         <td style="padding: 10px 20px; text-align: center; font-size: 12px;">
                             <p>If you would like to unsubscribe, please <a href="${unsubscribeLink}" style="color: #337ab7; text-decoration: none;">click here</a>.</p>
@@ -86,7 +113,8 @@ module.exports.process_subscription = async (subscription) => {
         const emailResponse = await axios.post(emailUrl, emailData);
 
         if (emailResponse.status !== 200) {
-            throw new Error(`Failed to send email: ${emailResponse.statusText}`);
+            const errorMessage = emailResponse.data.message || `Failed to send email: ${emailResponse.statusText}`;
+            throw new Error(errorMessage);
         }
 
         console.log('Subscription processing and email sending completed successfully');
@@ -98,7 +126,7 @@ module.exports.process_subscription = async (subscription) => {
             status: 'success',
         });
 
-        // set last processedtime
+        // Set last processed time
         const nextRunTime = new Date(now.getTime() + intervalMinutes * 60000);
         await Subscription.findByIdAndUpdate(subscription._id, {
             lastProcessedTime: now,
@@ -106,13 +134,14 @@ module.exports.process_subscription = async (subscription) => {
         });
 
     } catch (error) {
+        const errorMessage = error.response?.data?.message || error.message;
         // Log the event as a failure
         await SubscriptionEvent.create({
             subscriptionId: subscription._id,
             type: 'email',
-            detail: error.message,
+            detail: errorMessage,
             status: 'failure',
         });
-        console.error('Error processing subscription:', error);
+        console.error('Error processing subscription:', errorMessage);
     }
 };

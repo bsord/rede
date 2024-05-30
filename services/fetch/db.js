@@ -1,21 +1,21 @@
-const mongoose = require('mongoose')
+import mongoose from 'mongoose';
 
-let conn = null
+let conn = null;
 
-const uri = process.env['MONGO_CONNECTION_STRING']
+const uri = process.env.MONGO_CONNECTION_STRING;
 
-exports.connect = async function () {
+export async function connectDB() {
   if (conn == null) {
     conn = mongoose
       .connect(uri, {
         serverSelectionTimeoutMS: 5000,
       })
-      .then(() => mongoose)
+      .then(() => mongoose);
 
     // `await`ing connection after assigning to the `conn` variable
     // to avoid multiple function calls creating new connections
-    await conn
+    await conn;
   }
 
-  return conn
+  return conn;
 }
