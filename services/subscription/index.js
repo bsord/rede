@@ -46,7 +46,8 @@ module.exports.add_subscription = async (event) => {
     intervalMinutes: body.intervalMinutes || 1440,
     lastProcessedTime: null,
     status: 'active',
-    ownerId: userId 
+    ownerId: userId,
+    role: body.role
   });
 
   const sqs_response = await sendMessageToSQS(process.env.SUBSCRIPTION_PROCESSING_QUEUE_URL, subscription, 'subscription');
