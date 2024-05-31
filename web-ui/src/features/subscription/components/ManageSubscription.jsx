@@ -85,6 +85,10 @@ const ManageSubscription = ({ subscriptionId, onSubscriptionDeleted }) => {
         <span className="text-lg font-semibold">{subscription.niche}</span>
       </div>
       <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700">Role:</label>
+        <span className="text-lg font-semibold">{subscription.role}</span>
+      </div>
+      <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700">Last Email:</label>
         <span className="text-lg font-semibold">{formatDate(subscription.lastProcessedTime)}</span>
       </div>

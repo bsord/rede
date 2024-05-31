@@ -14,6 +14,9 @@ const SubscriptionListItem = ({ subscription }) => {
         <strong>Niche:</strong> {subscription.niche}
       </div>
       <div className="mb-2">
+        <strong>Role:</strong> {subscription.role}
+      </div>
+      <div className="mb-2">
         <strong>Status:</strong> {subscription.status}
       </div>
       <div className="mb-2">

@@ -14,7 +14,7 @@ module.exports.process_subscription = async (subscription) => {
     console.log(subscription._id);
     const now = new Date();
     try {
-        const { email, template, niche, intervalMinutes, _id: subscriptionId } = subscription;
+        const { email, template, niche, intervalMinutes, _id: subscriptionId, role } = subscription;
 
         if (!email || !template || !niche) {
             throw new Error('Missing required attributes in the subscription object');
@@ -70,6 +70,7 @@ module.exports.process_subscription = async (subscription) => {
         const contentResponse = await axios.post(contentUrl, {
             template: template,
             niche,
+            role,
             supportingData: stringifiedData
         });
 

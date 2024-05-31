@@ -197,6 +197,21 @@ export const niches = [
     { name: "Spirituality and Mindfulness", value: "mindfulness" }
 ];
 
+export const roles = [
+    { name: "Educators", value: "educator" },
+    { name: "Marketers", value: "marketer" },
+    { name: "Software Developers", value: "software_developer" },
+    { name: "Product Managers", value: "product_manager" },
+    { name: "Sales Professionals", value: "sales_professional" },
+    { name: "Entrepreneurs", value: "entrepreneur" },
+    { name: "Human Resources Managers", value: "human_resources_manager" },
+    { name: "Financial Analysts", value: "financial_analyst" },
+    { name: "Healthcare Professionals", value: "healthcare_professional" },
+    { name: "Designers", value: "designer" },
+    { name: "Research Scientists", value: "research_scientist" }
+];
+
+
 export const intervals = [
     { label: 'Hour', value: 60 },
     { label: 'Day', value: 1440 },

@@ -6,7 +6,7 @@ import { useCreateSubscription } from '../api/createSubscription';
 import { useCreateAiContentPreview } from '../api/createAiContentPreview';
 import { useNavigate } from 'react-router-dom';
 import ContentPreview from './ContentPreview';
-import { templates, niches, intervals } from './data';
+import { templates, niches, intervals, roles } from './data';
 import ReactGA from 'react-ga4';
 import { Select } from '../../../components/Elements/Select';
 import EmailInput from '../../auth/components/EmailInput';
@@ -20,6 +20,7 @@ const CreateSubscriptionForm = () => {
 
   const [email, setEmail] = useState(user?.email || '');
   const [niche, setNiche] = useState(niches[0].value || '');
+  const [role, setRole] = useState(roles[0].value || '');
   const [selectedTemplate, setSelectedTemplate] = useState(templates[0]);
   const [contentPreview, setContentPreview] = useState();
   const [intervalMinutes, setIntervalMinutes] = useState(intervals[1].value); // Default to the first interval value in minutes
@@ -27,6 +28,10 @@ const CreateSubscriptionForm = () => {
 
   const handleNicheChange = (event) => {
     setNiche(event.target.value);
+  };
+
+  const handleRoleChange = (event) => {
+    setRole(event.target.value);
   };
 
   const handleTemplateChange = (event) => {
@@ -45,6 +50,7 @@ const CreateSubscriptionForm = () => {
     const subscriptionData = {
       email,
       niche,
+      role,
       template: selectedTemplate,
       intervalMinutes, // Include the interval value in minutes
     };
@@ -122,6 +128,14 @@ const CreateSubscriptionForm = () => {
               {niches.map((niche) => (
                 <option key={niche.value} value={niche.value}>
                   {niche.name}
+                </option>
+              ))}
+            </Select>
+            <Typography variant="h6">for</Typography>
+            <Select id="role" name="role" value={role} onChange={handleRoleChange} className={"font-semibold text-xl"}>
+              {roles.map((role) => (
+                <option key={role.value} value={role.value}>
+                  {role.name}
                 </option>
               ))}
             </Select>

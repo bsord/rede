@@ -13,13 +13,17 @@ module.exports.content_from_template = async (event) => {
   var body = JSON.parse(event.body)
 
   // insert subscription to database
-  const niche = body?.niche || 'testing'
+  const niche = body?.niche || 'technology'
+  const role = body?.role || 'Educator'
   const template = body?.template || 'TEMPLATE'
   const supportingData = body?.supportingData || 'no supporting data'
 
   const html_input = `
     Industry:
     ${niche}
+    
+    Role:
+    ${role}
 
     Context:
     ${supportingData}
@@ -31,15 +35,16 @@ module.exports.content_from_template = async (event) => {
     ${template.content}
 
     Ask:
-    1. Using a scratch space, turn the provided context into a summary.
+    1. Using a scratch space, turn the provided context into a summary written for a person with the given role.
     2. Use the summary as context to come up with key ideas that would best fit the provided template.
-    3. Think creatively about how the key ideas can be used to generate the type of content desired in the template.
-    4. Write the content from the perspective of a solopreneur who is an expert on the topic.
+    3. Think creatively about how the key ideas relate to the given role and be used to generate the type of content desired in the template.
+    4. Write the content from the perspective of an expert on the topic that explains things in such a way that the given role would be able to easily understand it.
     5. Use a hook early in the content to capture the reader's attention.
     6. Ensure the content encourages engagement without directly asking for it.
     7. Populate the provided HTML template with the best ideas.
 
     Guidelines:
+    - Write the content for the specified role.
     - The content should not read like an advertisement or sales pitch, but like a story.
     - Placeholders can contain email-compatible HTML formatted content.
     - Output must only include the content for the <body> tag without the <body> tag itself.

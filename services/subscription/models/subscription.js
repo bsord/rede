@@ -9,7 +9,8 @@ const SubscriptionSchema = new Schema({
     index: true // Add an index to improve query performance
   },
   email: { type: String, required: true, maxLength: 100 },
-  niche: { type: String, required: true, maxLength: 100 },
+  niche: { type: String, required: true, maxLength: 100, default: 'technology' },
+  role: { type: String, required: true, maxLength: 100, default: 'educator'},
   template: {
     id: {
       type: String, required: true
