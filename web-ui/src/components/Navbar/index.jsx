@@ -90,7 +90,7 @@ const AuthenticatedMenu = ({ user, navigate }) => {
             to={'/account'}
             end
             className={({ isActive, isPending, isTransitioning }) =>
-              "rounded-lg px-3 py-2 text-lg text-gray-200 hover:bg-gray-200 hover:text-gray-800".concat([
+              "rounded-lg px-3 py-2 text-lg text-black-200 hover:bg-gray-200 hover:text-gray-800".concat([
                 isPending ? "pending" : "",
                 isActive ? "border-b-2 border-sky-400" : "",
                 isTransitioning ? "transitioning" : "",
@@ -191,13 +191,13 @@ export const Navbar = () => {
   const { data: user } = useAuthenticatedUser();
 
   return (
-    <div className="w-full shadow-md bg-gray-900 justify-between border-b border-b-gray-600">
+    <div className="w-full shadow-md bg-amber-50 justify-between border-b border-b-gray-600">
       <div className="items-center flex justify-center">
         <div className="relative max-w-5xl justify-between w-full">
           <div className="flex flex-row justify-between items-center p-4 md:px-0">
             <div className="flex items-center justify-center text-center hover:cursor-pointer" onClick={() => { navigate('/') }}>
               <img src={logo} alt="Logo" className="w-9 h-9 mr-2 rounded bg-sky-600" />
-              <h3 className="font-bold text-gray-200 text-3xl text-center items-center justify-center flex h-9 leading-none">
+              <h3 className="font-bold text-black-100 text-3xl text-center items-center justify-center flex h-9 leading-none">
                 Rede
               </h3>
             </div>
