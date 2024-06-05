@@ -108,7 +108,7 @@ const AuthenticatedMenu = ({ user, navigate }) => {
       </div>
       <div className="md:hidden">
         <button ref={menuButtonRef} onClick={toggleMenu} className="cursor-pointer flex items-center justify-center">
-          <FontAwesomeIcon icon={faBars} className={`h-7 transition-transform transform ${menuVisible ? 'rotate-90 text-sky-500' : 'text-white rotate-0'}`} />
+          <FontAwesomeIcon icon={faBars} className={`h-7 transition-transform transform ${menuVisible ? 'rotate-90 text-sky-500' : 'text-black rotate-0'}`} />
         </button>
         {menuVisible && (
           <div ref={menuRef} className="origin-top-right absolute right-0 w-full mt-4 rounded-b-xl shadow-lg bg-gray-900 ring-1 ring-black ring-opacity-5 focus:outline-none z-50 p-4" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabIndex="-1">
