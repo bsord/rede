@@ -60,7 +60,7 @@ const AuthenticatedMenu = ({ user, navigate }) => {
             to={'/subscriptions/new'}
             end
             className={({ isActive, isPending, isTransitioning }) =>
-              "rounded-lg px-3 py-2 text-lg text-gray-200 hover:bg-gray-200 hover:text-gray-800".concat([
+              "rounded-lg px-3 py-2 text-lg text-black hover:bg-gray-100 hover:text-black".concat([
                 isPending ? "pending" : "",
                 isActive ? "border-b-2 border-sky-400" : "",
                 isTransitioning ? "transitioning" : "",
@@ -74,7 +74,7 @@ const AuthenticatedMenu = ({ user, navigate }) => {
             to={'/subscriptions'}
             end
             className={({ isActive, isPending, isTransitioning }) =>
-              "rounded-lg px-3 py-2 text-lg text-gray-200 hover:bg-gray-200 hover:text-gray-800".concat([
+              "rounded-lg px-3 py-2 text-lg text-black hover:bg-gray-100 hover:text-black".concat([
                 isPending ? "pending" : "",
                 isActive ? "border-b-2 border-sky-400" : "",
                 isTransitioning ? "transitioning" : "",
@@ -90,7 +90,7 @@ const AuthenticatedMenu = ({ user, navigate }) => {
             to={'/account'}
             end
             className={({ isActive, isPending, isTransitioning }) =>
-              "rounded-lg px-3 py-2 text-lg text-black-200 hover:bg-gray-200 hover:text-gray-800".concat([
+              "rounded-lg px-3 py-2 text-lg text-black hover:bg-gray-100 hover:text-black".concat([
                 isPending ? "pending" : "",
                 isActive ? "border-b-2 border-sky-400" : "",
                 isTransitioning ? "transitioning" : "",
@@ -174,12 +174,12 @@ const AuthenticatedMenu = ({ user, navigate }) => {
 const NonAuthenticatedMenu = ({ navigate }) => (
   <>
     <div className="hidden md:flex items-center">
-      <button className="px-3 py-2 text-lg text-white bg-sky-500 hover:bg-sky-600 rounded-md font-semibold" onClick={() => navigate('/auth/magic')}>
+      <button className="px-3 py-2 text-lg text-white bg-amber-500 hover:bg-amber-600 rounded-md font-semibold" onClick={() => navigate('/auth/magic')}>
         SIGN IN
       </button>
     </div>
     <div className="md:hidden">
-      <button className="px-3 py-2 text-lg text-white bg-sky-500 hover:bg-sky-600 rounded-md font-semibold" onClick={() => navigate('/auth/magic')}>
+      <button className="px-3 py-2 text-lg text-white bg-amber-500 hover:bg-amber-600 rounded-md font-semibold" onClick={() => navigate('/auth/magic')}>
         SIGN IN
       </button>
     </div>
@@ -191,12 +191,12 @@ export const Navbar = () => {
   const { data: user } = useAuthenticatedUser();
 
   return (
-    <div className="w-full shadow-md bg-amber-50 justify-between border-b border-b-gray-600">
+    <div className="w-full bg-zinc-50 justify-between">
       <div className="items-center flex justify-center">
         <div className="relative max-w-5xl justify-between w-full">
           <div className="flex flex-row justify-between items-center p-4 md:px-0">
             <div className="flex items-center justify-center text-center hover:cursor-pointer" onClick={() => { navigate('/') }}>
-              <img src={logo} alt="Logo" className="w-9 h-9 mr-2 rounded bg-sky-600" />
+              <img src={logo} alt="Logo" className="w-9 h-9 mr-2 rounded bg-amber-500" />
               <h3 className="font-bold text-black-100 text-3xl text-center items-center justify-center flex h-9 leading-none">
                 Rede
               </h3>

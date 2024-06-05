@@ -123,14 +123,6 @@ const CreateSubscriptionForm = () => {
                 </option>
               ))}
             </Select>
-            <Typography variant="h6">about</Typography>
-            <Select id="niche" name="niche" value={niche} onChange={handleNicheChange} className={"font-semibold text-xl"}>
-              {niches.map((niche) => (
-                <option key={niche.value} value={niche.value}>
-                  {niche.name}
-                </option>
-              ))}
-            </Select>
             <Typography variant="h6">for</Typography>
             <Select id="role" name="role" value={role} onChange={handleRoleChange} className={"font-semibold text-xl"}>
               {roles.map((role) => (
