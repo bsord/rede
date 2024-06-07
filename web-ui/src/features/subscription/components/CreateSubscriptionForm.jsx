@@ -23,7 +23,7 @@ const CreateSubscriptionForm = () => {
   const [role, setRole] = useState(roles[0].value || '');
   const [selectedTemplate, setSelectedTemplate] = useState(templates[0]);
   const [contentPreview, setContentPreview] = useState();
-  const [intervalMinutes, setIntervalMinutes] = useState(intervals[1].value); // Default to the first interval value in minutes
+  const [intervalMinutes, setIntervalMinutes] = useState(intervals[0].value); // Default to the first interval value in minutes
   const [isEmailVerified, setIsEmailVerified] = useState(false);
 
   const handleNicheChange = (event) => {
@@ -108,34 +108,11 @@ const CreateSubscriptionForm = () => {
       <div className='p-4'>
         <form>
           <div className="flex flex-col gap-2 text-left">
-            <Typography variant="h6">I would like</Typography>
-            <Select
-              id="template"
-              name="template"
-              value={selectedTemplate?.name || ''}
-              onChange={handleTemplateChange}
-              placeholder="I would like"
-              className={"font-semibold text-xl"}
-            >
-              {templates.map((template) => (
-                <option key={template.name} value={template.name}>
-                  {template.name}
-                </option>
-              ))}
-            </Select>
-            <Typography variant="h6">for</Typography>
+            <Typography variant="h6">I want AI news for</Typography>
             <Select id="role" name="role" value={role} onChange={handleRoleChange} className={"font-semibold text-xl"}>
               {roles.map((role) => (
                 <option key={role.value} value={role.value}>
                   {role.name}
-                </option>
-              ))}
-            </Select>
-            <Typography variant="h6">every</Typography>
-            <Select id="interval" name="interval" value={intervalMinutes} onChange={handleIntervalChange} className={"font-semibold text-xl"}>
-              {intervals.map((interval) => (
-                <option key={interval.value} value={interval.value}>
-                  {interval.label}
                 </option>
               ))}
             </Select>
