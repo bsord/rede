@@ -1,7 +1,4 @@
 import { Head } from '../../../components/Head';
-import { Sidebar } from '../../../components/Sidebar';
-
-import { Copyright } from '../../../components/Copyright';
 import { Navbar } from '../../../components/Navbar';
 
 export const Layout = ({ title, children }) => {
