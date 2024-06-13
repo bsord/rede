@@ -7,6 +7,12 @@ import { ReactTyped } from 'react-typed';
 
 export const Landing = () => {
   const topRef = useRef(null);
+  const scrollToTop = () => {
+    topRef.current.scroll({
+      top: 0,
+      behavior: "smooth"
+    });
+  };
 
   const roles = [
     'Product Managers',
