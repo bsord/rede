@@ -17,22 +17,38 @@ module.exports.content_from_template = async (event) => {
   const role = body?.role || 'Educator'
   const template = body?.template || 'TEMPLATE'
   const supportingData = body?.supportingData || 'no supporting data'
+  //TODO make this unique for each job role
+  const interests = body?.interests || 'Key developments in AI, technology trends, competitive landscape, Delivering valuable products that meet customer needs, Staying ahead of industry trends and innovations, Making data-driven decisions to drive product strategy'
 
   const html_input = `
-    Industry:
-    ${niche}
-    
-    Role:
-    ${role}
+  Industry:
+  ${niche}
+  
+  Job Title:
+  ${role}
 
-    Context:
-    ${supportingData}
+  Key Interests: 
+  ${interests}
 
-    Template Type:
-    ${template.name}
+  Context:
+  ${supportingData}
 
-    Template:
-    ${template.content}
+  Template Type:
+  ${template.name}
+
+  Template:
+  ${template.content}
+
+  Example output for each news article:
+  <news item>
+  [RELEVANT EMOJI]**[Bolded Title - with no semi-colons]**
+
+  - [First takeaway - written in 1-3 sentences total]
+  - [Second takeaway - written in 1-3 sentences total]
+  - [Third takeaway - written in 1-3 sentences total]
+  - **Why this matters for [JOB TITLE]**: [Explain why this news is relevant to the job role in 1-2 sentences total]
+  [URL Link to article with unique brief title]
+  </news item>
 
     Ask:
     1. Using a scratch space, turn the provided context into a summary written for a person with the given role.

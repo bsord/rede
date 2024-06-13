@@ -28,10 +28,10 @@ export const templates = [
                         {{main_content
 
                             <!-- guidelines:
-                            - Start with a Hook: Begin the post with a question, interesting fact, or bold statement to grab attention.
+                            - Start with a Hook: Begin the post with a question, interesting fact, or bold statement to grab attention. [don’t explicitly mention it is a HOOK]
                             - Break down the content to organize the information using p tags.
                             - Include Lists: Lists use arrows, hyphens,•, or other unicode characters for markers. Lists use the 'br' html tag at the end of each item
-                            - Conclude with a clear CTA, encouraging readers to engage, comment, or share.
+                            - Conclude with a clear CTA, encouraging readers to engage, comment, or share. [don’t mention CTA or “call to action”]
                             - Font: Do not customize the font. All text should be the same style and 16px
                             - Remember: You are an industry expert who gives industry insights on the given topic, not a sales person.
                             - You never say, 'As an ...' when giving an opinion.
