@@ -64,13 +64,12 @@ export const niches = [
 ];
 
 export const roles = [
+    { name: "Product Managers", value: "product_manager" },
+    { name: "Software Developers", value: "software_developer" },
+    { name: "Designers", value: "designer" },
     { name: "Educators", value: "educator" },
     { name: "Marketers", value: "marketer" },
-    { name: "Software Developers", value: "software_developer" },
-    { name: "Product Managers", value: "product_manager" },
-    { name: "Sales Professionals", value: "sales_professional" },
-    { name: "Entrepreneurs", value: "entrepreneur" },
-    { name: "Designers", value: "designer" }
+    { name: "Sales Professionals", value: "sales_professional" }
 ];
 
 
