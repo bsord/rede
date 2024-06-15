@@ -11,10 +11,12 @@ import ReactGA from 'react-ga4';
 import { Select } from '../../../components/Elements/Select';
 import EmailInput from '../../auth/components/EmailInput';
 import { useAuthenticatedUser } from '../../auth';
+import { useLocation } from 'react-router-dom';
 
 const CreateSubscriptionForm = () => {
   const { data: user } = useAuthenticatedUser();
   const navigate = useNavigate();
+  const location = useLocation();
   const { mutate: createSubscription, isPending: subscriptionIsPending, error: subscriptionError } = useCreateSubscription();
   const { mutate: createAiContentPreview, isPending: contentPreviewIsPending, error: contentPreviewError } = useCreateAiContentPreview();
 
@@ -23,8 +25,28 @@ const CreateSubscriptionForm = () => {
   const [role, setRole] = useState(roles[0].value || '');
   const [selectedTemplate, setSelectedTemplate] = useState(templates[0]);
   const [contentPreview, setContentPreview] = useState();
-  const [intervalMinutes, setIntervalMinutes] = useState(intervals[0].value); // Default to the first interval value in minutes
+  const [intervalMinutes, setIntervalMinutes] = useState(intervals[0].value);
   const [isEmailVerified, setIsEmailVerified] = useState(false);
+  const [shouldAutoSubmit, setShouldAutoSubmit] = useState(false);
+
+  useEffect(() => {
+    if (location.state?.subscriptionData) {
+      console.log(location.state?.subscriptionData);
+      const { email, niche, role, template, intervalMinutes } = location.state.subscriptionData;
+      setEmail(email);
+      setNiche(niche);
+      setRole(role);
+      setSelectedTemplate(template);
+      setIntervalMinutes(intervalMinutes);
+      setShouldAutoSubmit(true); // Set the flag to auto-submit the form
+    }
+  }, [location.state]);
+
+  useEffect(() => {
+    if (shouldAutoSubmit) {
+      handleSubmit();
+    }
+  }, [shouldAutoSubmit]);
 
   const handleNicheChange = (event) => {
     setNiche(event.target.value);
@@ -52,7 +74,7 @@ const CreateSubscriptionForm = () => {
       niche,
       role,
       template: selectedTemplate,
-      intervalMinutes, // Include the interval value in minutes
+      intervalMinutes,
     };
 
     if (user) {
@@ -68,7 +90,7 @@ const CreateSubscriptionForm = () => {
         },
       });
     } else {
-      navigate(`/auth/magic?email=${email}`);
+      navigate(`/auth/magic?email=${email}`, { state: { subscriptionData } });
     }
   };
 

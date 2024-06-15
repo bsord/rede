@@ -1,3 +1,4 @@
+import { useLocation } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
@@ -10,6 +11,7 @@ import { Input } from '../../../components/Elements';
 
 export const MagicLinkRequest = ({ initialEmail, codeSecret }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const magicLink = useMagicLink();
   const magic = useMagic();
   const [sent, setSent] = useState(false);
@@ -28,7 +30,10 @@ export const MagicLinkRequest = ({ initialEmail, codeSecret }) => {
 
   const handleLogin = () => {
     magic.mutate({ email, numericCode, codeSecret }, {
-      onSuccess: () => navigate('/subscriptions')
+      onSuccess: () => {
+        const redirectTo = location.state?.subscriptionData ? '/subscriptions/new' : '/subscriptions';
+        navigate(redirectTo, { state: location.state });
+      },
     });
   };
 
